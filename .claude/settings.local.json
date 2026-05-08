@@ -1,0 +1,12 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(npm install *)",
+      "Bash(npm create *)",
+      "Bash(npm init *)",
+      "Bash(npx vite *)",
+      "Bash(npx tsc *)",
+      "Bash(mkdir -p src/api src/assets src/components src/hooks src/pages src/routes src/store src/utils)"
+    ]
+  }
+}
