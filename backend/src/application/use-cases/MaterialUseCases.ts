@@ -1,5 +1,5 @@
-import { Material } from "../../domain/entities/Material";
-import { MaterialRepository } from "../../domain/repositories/MaterialRepository";
+import type { Material } from "../../domain/entities/Material.js";
+import type { MaterialRepository } from "../../domain/repositories/MaterialRepository.js";
 
 export class CreateMaterialUseCase {
   constructor(private materialRepository: MaterialRepository) {}

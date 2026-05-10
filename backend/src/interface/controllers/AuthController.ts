@@ -1,7 +1,7 @@
-import { Request, Response } from "express";
-import { PrismaUserRepository } from "../../infrastructure/repositories/PrismaUserRepository";
-import { LoginUser } from "../../application/use-cases/LoginUser";
-import { RegisterUser } from "../../application/use-cases/RegisterUser";
+import type { Request, Response } from "express";
+import { PrismaUserRepository } from "../../infrastructure/repositories/PrismaUserRepository.js";
+import { LoginUser } from "../../application/use-cases/LoginUser.js";
+import { RegisterUser } from "../../application/use-cases/RegisterUser.js";
 
 const userRepository = new PrismaUserRepository();
 

@@ -1,5 +1,5 @@
-import api from './api';
-import type { Work, WorkService } from './works.service';
+import api from './api.js';
+import type { Work, WorkService } from './works.service.js';
 
 const WorkServiceImplementation: WorkService = {
   async getAll() {

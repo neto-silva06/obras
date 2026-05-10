@@ -1,8 +1,8 @@
 import { Plus, Pencil, Trash2, ArrowLeft, Package } from 'lucide-react';
-import { DataTable } from '../../components/common/DataTable';
-import { Button } from '../../components/common/Button';
-import warehouseApi from '../../services/warehouses.api';
-import { Warehouse } from '../../services/warehouses.service';
+import { DataTable } from '../../components/common/DataTable.js';
+import { Button } from '../../components/common/Button.js';
+import warehouseApi from '../../services/warehouses.api.js';
+import type { Warehouse } from '../../services/warehouses.service.js';
 import { useNavigate, useParams } from 'react-router-dom';
 import React, { useState, useEffect } from 'react';
 

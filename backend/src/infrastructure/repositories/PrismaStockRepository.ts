@@ -1,6 +1,6 @@
-import { Stock } from "../../domain/entities/Stock";
-import { StockRepository } from "../../domain/repositories/StockRepository";
-import { prisma } from "../database/prisma";
+import type { Stock } from "../../domain/entities/Stock.js";
+import type { StockRepository } from "../../domain/repositories/StockRepository.js";
+import { prisma } from "../database/prisma.js";
 
 export class PrismaStockRepository implements StockRepository {
   async findByWarehouse(warehouseId: string): Promise<Stock[]> {

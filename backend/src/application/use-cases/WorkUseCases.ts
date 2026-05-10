@@ -1,5 +1,5 @@
-import { Work } from "../../domain/entities/Work";
-import { WorkRepository } from "../../domain/repositories/WorkRepository";
+import type { Work } from "../../domain/entities/Work.js";
+import type { WorkRepository } from "../../domain/repositories/WorkRepository.js";
 
 export class CreateWorkUseCase {
   constructor(private workRepository: WorkRepository) {}

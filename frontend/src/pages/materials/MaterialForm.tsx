@@ -1,10 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { Save, X } from 'lucide-react';
-import { Button } from '../../components/common/Button';
-import { FormField } from '../../components/common/FormField';
-import materialApi from '../../services/materials.api';
-import { Material } from '../../services/materials.service';
+import { Button } from '../../components/common/Button.js';
+import { FormField } from '../../components/common/FormField.js';
+import materialApi from '../../services/materials.api.js';
+import type { Material } from '../../services/materials.service.js';
 
 export function MaterialForm() {
   const { id } = useParams();

@@ -1,6 +1,6 @@
 import { Router } from "express";
-import { WorkController } from "../controllers/WorkController";
-import { authMiddleware } from "../../infrastructure/middlewares/auth.middleware";
+import { WorkController } from "../controllers/WorkController.js";
+import { authMiddleware } from "../../infrastructure/middlewares/auth.middleware.js";
 
 const workRouter = Router();
 const workController = new WorkController();

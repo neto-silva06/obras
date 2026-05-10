@@ -1,6 +1,6 @@
 import { Router } from "express";
-import { StockController } from "../controllers/StockController";
-import { authMiddleware } from "../../infrastructure/middlewares/auth.middleware";
+import { StockController } from "../controllers/StockController.js";
+import { authMiddleware } from "../../infrastructure/middlewares/auth.middleware.js";
 
 const stockRouter = Router();
 const stockController = new StockController();

@@ -1,5 +1,5 @@
-import api from './api';
-import { Material, MaterialService } from './materials.service';
+import api from './api.js';
+import type { Material, MaterialService } from './materials.service.js';
 
 const MaterialServiceImplementation: MaterialService = {
   async getAll() {

@@ -1,11 +1,11 @@
 import React, { useEffect, useState } from 'react';
 import { useParams, Link } from 'react-router-dom';
-import { stockApi } from '../../services/stock.service';
-import { materialApi } from '../../services/materials.api';
-import { warehouseApi } from '../../services/warehouses.api';
-import { DataTable } from '../../components/common/DataTable';
-import { Button } from '../../components/common/Button';
-import { FormField } from '../../components/common/FormField';
+import { stockApi } from '../../services/stock.service.js';
+import materialApi from '../../services/materials.api.js';
+import warehouseApi from '../../services/warehouses.api.js';
+import { DataTable } from '../../components/common/DataTable.js';
+import { Button } from '../../components/common/Button.js';
+import { FormField } from '../../components/common/FormField.js';
 
 interface StockItem {
   id: string;
@@ -22,7 +22,7 @@ export function WarehouseStock() {
   const [stocks, setStocks] = useState<StockItem[]>([]);
   const [warehouse, setWarehouse] = useState<any>(null);
   const [materials, setMaterials] = useState<any[]>([]);
-  const [adjustment, setAdjustment] = useState({ materialId: '', quantity: 0, operation: 'add' });
+  const [adjustment, setAdjustment] = useState<{ materialId: string; quantity: number; operation: 'add' | 'remove' | 'set' }>({ materialId: '', quantity: 0, operation: 'add' });
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -34,12 +34,12 @@ export function WarehouseStock() {
     try {
       const [stockRes, warehouseRes, materialRes] = await Promise.all([
         stockApi.getByWarehouse(id!),
-        warehouseApi.get(id!),
-        materialApi.list()
+        warehouseApi.getById(id!),
+        materialApi.getAll()
       ]);
       setStocks(stockRes.data);
       setWarehouse(warehouseRes.data);
-      setMaterials(materialRes.data);
+      setMaterials(materialRes);
     } catch (error) {
       alert('Erro ao carregar dados de estoque');
     } finally {
@@ -76,12 +76,15 @@ export function WarehouseStock() {
           <DataTable
             data={stocks}
             columns={[
-              { key: 'material.name', label: 'Material', render: (row) => row.material.name },
-              { key: 'quantity', label: 'Quantidade', render: (row) => (
-                <span className={`font-bold ${row.quantity < 10 ? 'text-red-500' : ''}`}>
-                  {row.quantity} {row.material.unit}
-                </span>
-              )},
+              { header: 'Material', accessor: (row) => row.material.name },
+              {
+                header: 'Quantidade',
+                accessor: (row) => (
+                  <span className={`font-bold ${row.quantity < 10 ? 'text-red-500' : ''}`}>
+                    {row.quantity} {row.material.unit}
+                  </span>
+                )
+              },
             ]}
           />
         </div>
@@ -89,18 +92,21 @@ export function WarehouseStock() {
         <div className="bg-gray-100 p-6 rounded-lg h-fit">
           <h2 className="text-xl font-semibold mb-4">Movimentação de Estoque</h2>
           <div className="space-y-4">
-            <FormField
-              label="Material"
-              value={adjustment.materialId}
-              onChange={(val) => setAdjustment({ ...adjustment, materialId: val })}
-            >
-              <select className="w-full p-2 border rounded">
+            <div>
+              <label htmlFor="material-select" className="block text-sm font-medium text-gray-700">Material</label>
+              <select
+                id="material-select"
+                className="w-full p-2 border rounded"
+                value={adjustment.materialId}
+                onChange={(e) => setAdjustment({ ...adjustment, materialId: e.target.value })}
+              >
                 <option value="">Selecione o material</option>
                 {materials.map(m => <option key={m.id} value={m.id}>{m.name}</option>)}
               </select>
-            </FormField>
+            </div>
 
             <FormField
+              name="quantity"
               label="Quantidade"
               type="number"
               value={adjustment.quantity}
@@ -109,15 +115,15 @@ export function WarehouseStock() {
 
             <div className="flex gap-2">
               <Button
-                onClick={() => setAdjustment({...adjustment, operation: 'add'})}
+                onClick={() => setAdjustment({ ...adjustment, operation: 'add' })}
                 className={adjustment.operation === 'add' ? 'bg-blue-600' : 'bg-gray-400'}
               >Entrada</Button>
               <Button
-                onClick={() => setAdjustment({...adjustment, operation: 'remove'})}
+                onClick={() => setAdjustment({ ...adjustment, operation: 'remove' })}
                 className={adjustment.operation === 'remove' ? 'bg-blue-600' : 'bg-gray-400'}
               >Saída</Button>
               <Button
-                onClick={() => setAdjustment({...adjustment, operation: 'set'})}
+                onClick={() => setAdjustment({ ...adjustment, operation: 'set' })}
                 className={adjustment.operation === 'set' ? 'bg-blue-600' : 'bg-gray-400'}
               >Ajuste</Button>
             </div>

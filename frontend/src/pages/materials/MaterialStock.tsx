@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
-import { stockApi } from '../../services/stock.service';
-import { materialApi } from '../../services/materials.api';
-import { DataTable } from '../../components/common/DataTable';
+import { stockApi } from '../../services/stock.service.js';
+import materialApi from '../../services/materials.api.js';
+import { DataTable } from '../../components/common/DataTable.js';
 import { Link } from 'react-router-dom';
 
 interface StockItem {
@@ -25,7 +25,7 @@ export function MaterialStock() {
       try {
         const [stockRes, materialRes] = await Promise.all([
           stockApi.getByMaterial(id!),
-          materialApi.get(id!)
+          materialApi.getById(id!)
         ]);
         setStocks(stockRes.data);
         setMaterial(materialRes.data);
@@ -50,12 +50,15 @@ export function MaterialStock() {
       <DataTable
         data={stocks}
         columns={[
-          { key: 'warehouse.name', label: 'Depósito', render: (row) => row.warehouse.name },
-          { key: 'quantity', label: 'Quantidade', render: (row) => (
-            <span className={`font-bold ${row.quantity < 10 ? 'text-red-500' : ''}`}>
-              {row.quantity} {material?.unit}
-            </span>
-          )},
+          { header: 'Depósito', accessor: (row: StockItem) => row.warehouse.name },
+          {
+            header: 'Quantidade',
+            accessor: (row: StockItem) => (
+              <span className={`font-bold ${row.quantity < 10 ? 'text-red-500' : ''}`}>
+                {row.quantity} {material?.unit}
+              </span>
+            )
+          }
         ]}
       />
     </div>

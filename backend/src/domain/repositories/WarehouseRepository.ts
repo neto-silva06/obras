@@ -1,4 +1,4 @@
-import { Warehouse } from "../entities/Warehouse";
+import type { Warehouse } from "../entities/Warehouse.js";
 export interface WarehouseRepository {
   findAll(): Promise<Warehouse[]>;
   findById(id: string): Promise<Warehouse | null>;

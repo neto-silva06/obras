@@ -1,4 +1,4 @@
-import { Material } from "../entities/Material";
+import type { Material } from "../entities/Material.js";
 export interface MaterialRepository {
   findAll(): Promise<Material[]>;
   findById(id: string): Promise<Material | null>;

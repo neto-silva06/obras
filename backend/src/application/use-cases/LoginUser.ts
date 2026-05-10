@@ -1,6 +1,6 @@
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
-import { UserRepository } from "../../domain/repositories/UserRepository";
+import type { UserRepository } from "../../domain/repositories/UserRepository.js";
 export class LoginUser {
   constructor(private userRepository: UserRepository) {}
   async execute({ email, password }: any): Promise<{ user: any, token: string }> {

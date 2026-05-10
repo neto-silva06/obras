@@ -1,6 +1,6 @@
-import { Warehouse } from "../../domain/entities/Warehouse";
-import { WarehouseRepository } from "../../domain/repositories/WarehouseRepository";
-import { prisma } from "../database/prisma";
+import type { Warehouse } from "../../domain/entities/Warehouse.js";
+import type { WarehouseRepository } from "../../domain/repositories/WarehouseRepository.js";
+import { prisma } from "../database/prisma.js";
 
 export class PrismaWarehouseRepository implements WarehouseRepository {
   async findAll(): Promise<Warehouse[]> {

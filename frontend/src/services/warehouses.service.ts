@@ -1,4 +1,5 @@
 export interface Warehouse {
+  data: any;
   id: string;
   name: string;
   workId: string;

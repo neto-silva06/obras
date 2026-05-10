@@ -43,7 +43,7 @@ Sistema completo para controle de obras, depósitos, materiais e estoque, desenv
    ```bash
    npm run dev
    ```
-   *A API estará disponível em `http://localhost:3000`*
+   *A API estará disponível em `http://localhost:3333`*
 
 ### 3. Configuração do Frontend
 

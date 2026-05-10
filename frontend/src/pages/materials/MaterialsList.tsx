@@ -1,10 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { Plus, Pencil, Trash2, Package } from 'lucide-react';
-import { DataTable } from '../../components/common/DataTable';
-import { Button } from '../../components/common/Button';
-import materialApi from '../../services/materials.api';
-import { Material } from '../../services/materials.service';
+import { DataTable } from '../../components/common/DataTable.js';
+import { Button } from '../../components/common/Button.js';
+import materialApi from '../../services/materials.api.js';
+import type { Material } from '../../services/materials.service.js';
 
 export function MaterialsList() {
   const navigate = useNavigate();

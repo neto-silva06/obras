@@ -1,6 +1,6 @@
-import { User } from "../../domain/entities/User";
-import { UserRepository } from "../../domain/repositories/UserRepository";
-import { prisma } from "../database/prisma";
+import type { User } from "../../domain/entities/User.js";
+import type { UserRepository } from "../../domain/repositories/UserRepository.js";
+import { prisma } from "../database/prisma.js";
 export class PrismaUserRepository implements UserRepository {
   async findByEmail(email: string): Promise<User | null> {
     return await prisma.user.findUnique({ where: { email } });

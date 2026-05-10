@@ -1,4 +1,4 @@
-import { Work } from "../entities/Work";
+import type { Work } from "../entities/Work.js";
 export interface WorkRepository {
   findAll(): Promise<Work[]>;
   findById(id: string): Promise<Work | null>;

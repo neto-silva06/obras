@@ -1,5 +1,5 @@
-import { Warehouse } from "../../domain/entities/Warehouse";
-import { WarehouseRepository } from "../../domain/repositories/WarehouseRepository";
+import type { Warehouse } from "../../domain/entities/Warehouse.js";
+import type { WarehouseRepository } from "../../domain/repositories/WarehouseRepository.js";
 
 export class CreateWarehouseUseCase {
   constructor(private warehouseRepository: WarehouseRepository) {}

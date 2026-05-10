@@ -1,5 +1,5 @@
-import api from './api';
-import { Warehouse, WarehouseService } from './warehouses.service';
+import api from './api.js';
+import type { Warehouse, WarehouseService } from './warehouses.service.js';
 
 const WarehouseServiceImplementation: WarehouseService = {
   async getAll() {

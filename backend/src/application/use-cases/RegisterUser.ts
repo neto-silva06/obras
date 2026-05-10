@@ -1,6 +1,6 @@
 import bcrypt from "bcryptjs";
-import { UserRepository } from "../../domain/repositories/UserRepository";
-import { User } from "../../domain/entities/User";
+import type { UserRepository } from "../../domain/repositories/UserRepository.js";
+import type { User } from "../../domain/entities/User.js";
 
 export class RegisterUser {
   constructor(private userRepository: UserRepository) {}
@@ -9,6 +9,10 @@ export class RegisterUser {
     const existingUser = await this.userRepository.findByEmail(data.email);
     if (existingUser) {
       throw new Error("User already exists with this email");
+    }
+
+    if (!data.password) {
+      throw new Error("Password is required");
     }
 
     const hashedPassword = await bcrypt.hash(data.password, 10);

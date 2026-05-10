@@ -1,10 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { Save, X } from 'lucide-react';
-import { Button } from '../../components/common/Button';
-import { FormField } from '../../components/common/FormField';
-import workApi from '../../services/works.api';
-import { Work } from '../../services/works.service';
+import { Button } from '../../components/common/Button.js';
+import { FormField } from '../../components/common/FormField.js';
+import workApi from '../../services/works.api.js';
+import type { Work } from '../../services/works.service.js';
 
 export function WorkForm() {
   const { id } = useParams();

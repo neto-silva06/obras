@@ -1,10 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { Plus, Pencil, Trash2 } from 'lucide-react';
-import { DataTable } from '../../components/common/DataTable';
-import { Button } from '../../components/common/Button';
-import workApi from '../../services/works.api';
-import { Work } from '../../services/works.service';
+import { DataTable } from '../../components/common/DataTable.js';
+import { Button } from '../../components/common/Button.js';
+import workApi from '../../services/works.api.js';
+import type { Work } from '../../services/works.service.js';
 
 export function WorksList() {
   const navigate = useNavigate();

@@ -1,11 +1,11 @@
-import { Request, Response } from "express";
-import { PrismaStockRepository } from "../../infrastructure/repositories/PrismaStockRepository";
+import type { Request, Response } from "express";
+import { PrismaStockRepository } from "../../infrastructure/repositories/PrismaStockRepository.js";
 import {
   GetStockByWarehouseUseCase,
   GetStockByMaterialUseCase,
   UpdateStockUseCase,
   AdjustStockUseCase
-} from "../../application/use-cases/StockUseCases";
+} from "../../application/use-cases/StockUseCases.js";
 
 const stockRepository = new PrismaStockRepository();
 const getStockByWarehouse = new GetStockByWarehouseUseCase(stockRepository);
@@ -16,18 +16,18 @@ const adjustStock = new AdjustStockUseCase(stockRepository);
 export class StockController {
   async getByWarehouse(req: Request, res: Response) {
     const { warehouseId } = req.params;
-    return res.json(await getStockByWarehouse.execute(warehouseId));
+    return res.json(await getStockByWarehouse.execute(warehouseId as string));
   }
 
   async getByMaterial(req: Request, res: Response) {
     const { materialId } = req.params;
-    return res.json(await getStockByMaterial.execute(materialId));
+    return res.json(await getStockByMaterial.execute(materialId as string));
   }
 
   async update(req: Request, res: Response) {
     const { warehouseId, materialId } = req.params;
     const { quantity } = req.body;
-    return res.json(await updateStock.execute(warehouseId, materialId, quantity));
+    return res.json(await updateStock.execute(warehouseId as string, materialId as string, quantity));
   }
 
   async adjust(req: Request, res: Response) {

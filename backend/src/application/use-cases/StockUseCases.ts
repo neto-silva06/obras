@@ -1,5 +1,5 @@
-import { StockRepository } from "../../domain/repositories/StockRepository";
-import { Stock } from "../../domain/entities/Stock";
+import type { StockRepository } from "../../domain/repositories/StockRepository.js";
+import type { Stock } from "../../domain/entities/Stock.js";
 
 export class GetStockByWarehouseUseCase {
   constructor(private stockRepository: StockRepository) {}

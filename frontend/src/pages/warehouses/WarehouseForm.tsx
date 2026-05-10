@@ -1,12 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useParams, useLocation } from 'react-router-dom';
 import { Save, X } from 'lucide-react';
-import { Button } from '../../components/common/Button';
-import { FormField } from '../../components/common/FormField';
-import warehouseApi from '../../services/warehouses.api';
-import workApi from '../../services/works.api';
-import { Warehouse } from '../../services/warehouses.service';
-import { Work } from '../../services/works.service';
+import { Button } from '../../components/common/Button.js';
+import { FormField } from '../../components/common/FormField.js';
+import warehouseApi from '../../services/warehouses.api.js';
+import workApi from '../../services/works.api.js';
+import type { Warehouse } from '../../services/warehouses.service.js';
+import type { Work } from '../../services/works.service.js';
 
 export function WarehouseForm() {
   const { id } = useParams();

@@ -1,4 +1,4 @@
-import { Stock } from "../domain/entities/Stock";
+import type { Stock } from "../../domain/entities/Stock.js";
 export interface StockRepository {
   findByWarehouse(warehouseId: string): Promise<Stock[]>;
   findByMaterial(materialId: string): Promise<Stock[]>;

@@ -1,12 +1,12 @@
-import { Request, Response } from "express";
-import { PrismaWorkRepository } from "../../infrastructure/repositories/PrismaWorkRepository";
+import type { Request, Response } from "express";
+import { PrismaWorkRepository } from "../../infrastructure/repositories/PrismaWorkRepository.js";
 import {
   CreateWorkUseCase,
   ListWorksUseCase,
   GetWorkUseCase,
   UpdateWorkUseCase,
   DeleteWorkUseCase
-} from "../../application/use-cases/WorkUseCases";
+} from "../../application/use-cases/WorkUseCases.js";
 
 const workRepository = new PrismaWorkRepository();
 const createWork = new CreateWorkUseCase(workRepository);
@@ -25,6 +25,9 @@ export class WorkController {
   }
 
   async get(req: Request, res: Response) {
+    if (!req.params.id) {
+      return res.status(400).json({ message: "ID is required" });
+    }
     try {
       return res.json(await getWork.execute(req.params.id));
     } catch (e: any) {
@@ -33,10 +36,16 @@ export class WorkController {
   }
 
   async update(req: Request, res: Response) {
+    if (!req.params.id) {
+      return res.status(400).json({ message: "ID is required" });
+    }
     return res.json(await updateWork.execute(req.params.id, req.body));
   }
 
   async delete(req: Request, res: Response) {
+    if (!req.params.id) {
+      return res.status(400).json({ message: "ID is required" });
+    }
     await deleteWork.execute(req.params.id);
     return res.status(204).send();
   }

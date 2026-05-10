@@ -1,6 +1,6 @@
 import { Router } from "express";
-import { MaterialController } from "../controllers/MaterialController";
-import { authMiddleware } from "../../infrastructure/middlewares/auth.middleware";
+import { MaterialController } from "../controllers/MaterialController.js";
+import { authMiddleware } from "../../infrastructure/middlewares/auth.middleware.js";
 
 const materialRouter = Router();
 const materialController = new MaterialController();

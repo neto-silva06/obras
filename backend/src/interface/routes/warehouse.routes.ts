@@ -1,6 +1,6 @@
 import { Router } from "express";
-import { WarehouseController } from "../controllers/WarehouseController";
-import { authMiddleware } from "../../infrastructure/middlewares/auth.middleware";
+import { WarehouseController } from "../controllers/WarehouseController.js";
+import { authMiddleware } from "../../infrastructure/middlewares/auth.middleware.js";
 
 const warehouseRouter = Router();
 const warehouseController = new WarehouseController();
