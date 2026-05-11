@@ -1,4 +1,3 @@
-import axios from 'axios';
-const api = axios.create({ baseURL: '/api' });
+import api from '../api/api.js';
 export default api;
 //# sourceMappingURL=api.js.map
