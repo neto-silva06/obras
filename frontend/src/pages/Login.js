@@ -10,7 +10,7 @@ export function Login() {
         e.preventDefault();
         try {
             const response = await api.post('/auth/login', { email, password });
-            localStorage.setItem('@Obras:token', response.data.token);
+            localStorage.setItem('token', response.data.token);
             navigate('/dashboard');
         }
         catch (error) {
