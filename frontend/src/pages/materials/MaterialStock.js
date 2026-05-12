@@ -1,12 +1,14 @@
 import { jsx as _jsx, jsxs as _jsxs } from "react/jsx-runtime";
 import React, { useEffect, useState } from 'react';
-import { useParams } from 'react-router-dom';
+import { useParams, Link, useNavigate } from 'react-router-dom';
 import { stockApi } from '../../services/stock.service.js';
 import materialApi from '../../services/materials.api.js';
 import { DataTable } from '../../components/common/DataTable.js';
-import { Link } from 'react-router-dom';
+import { LayoutDashboard } from 'lucide-react';
+import { Button } from '../../components/common/Button.js';
 export function MaterialStock() {
     const { id } = useParams();
+    const navigate = useNavigate();
     const [stocks, setStocks] = useState([]);
     const [material, setMaterial] = useState(null);
     const [loading, setLoading] = useState(true);
@@ -31,7 +33,7 @@ export function MaterialStock() {
     }, [id]);
     if (loading)
         return _jsx("div", { className: "p-8", children: "Carregando..." });
-    return (_jsxs("div", { className: "p-8", children: [_jsxs("div", { className: "flex justify-between items-center mb-6", children: [_jsxs("h1", { className: "text-2xl font-bold", children: ["Distribui\u00E7\u00E3o: ", material?.name] }), _jsx(Link, { to: "/materials", className: "text-blue-500", children: "Voltar aos Materiais" })] }), _jsx(DataTable, { data: stocks, columns: [
+    return (_jsxs("div", { className: "p-8", children: [_jsxs("div", { className: "flex justify-between items-center mb-6", children: [_jsxs("h1", { className: "text-2xl font-bold", children: ["Distribui\u00E7\u00E3o: ", material?.name] }), _jsxs("div", { className: "flex items-center gap-4", children: [_jsxs(Button, { variant: "ghost", onClick: () => navigate('/dashboard'), title: "Dashboard", children: [_jsx(LayoutDashboard, { size: 20, className: "mr-2" }), " Dashboard"] }), _jsx(Link, { to: "/materials", className: "text-blue-500 hover:underline", children: "Voltar aos Materiais" })] })] }), _jsx(DataTable, { data: stocks, columns: [
                     { header: 'Depósito', accessor: (row) => row.warehouse.name },
                     {
                         header: 'Quantidade',

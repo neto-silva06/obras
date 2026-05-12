@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { useNavigate, useParams } from 'react-router-dom';
-import { Plus, Pencil, Trash2 } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
+import { Plus, Pencil, Trash2, LayoutDashboard } from 'lucide-react';
 import { DataTable } from '../../components/common/DataTable.js';
 import { Button } from '../../components/common/Button.js';
 import workApi from '../../services/works.api.js';
@@ -70,9 +70,14 @@ export function WorksList() {
     <div className="p-6">
       <div className="flex justify-between items-center mb-6">
         <h1 className="text-2xl font-bold text-gray-800">Gestão de Obras</h1>
-        <Button onClick={() => navigate('/works/new')}>
-          <Plus size={18} className="mr-2" /> Nova Obra
-        </Button>
+        <div className="flex gap-2">
+          <Button variant="secondary" onClick={() => navigate('/dashboard')}>
+            <LayoutDashboard size={18} className="mr-2" /> Dashboard
+          </Button>
+          <Button onClick={() => navigate('/works/new')}>
+            <Plus size={18} className="mr-2" /> Nova Obra
+          </Button>
+        </div>
       </div>
       <DataTable
         columns={columns}

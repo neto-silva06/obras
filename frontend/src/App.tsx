@@ -13,6 +13,7 @@ import { MaterialStock } from './pages/materials/MaterialStock.js';
 import { WarehousesList } from './pages/warehouses/WarehousesList.js';
 import { WarehouseForm } from './pages/warehouses/WarehouseForm.js';
 import { WarehouseStock } from './pages/warehouses/WarehouseStock.js';
+import { StockMovement } from './pages/StockMovement.js';
 
 const AppRoutes = () => {
   return (
@@ -40,6 +41,7 @@ const AppRoutes = () => {
         <Route path="/warehouses/:id/edit" element={<WarehouseForm />} />
         <Route path="/warehouses/:id/stock" element={<WarehouseStock />} />
         <Route path="/warehouses/work/:workId" element={<WarehousesList />} />
+        <Route path="/stock-movement" element={<StockMovement />} />
       </Route>
 
       <Route path="/" element={<Navigate to="/dashboard" replace />} />
