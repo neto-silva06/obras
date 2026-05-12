@@ -1,62 +1,58 @@
 import React, { useState, useEffect } from 'react';
-import { useNavigate, useParams, useLocation } from 'react-router-dom';
-import { Save, X } from 'lucide-react';
+import { useNavigate, useParams, useSearchParams } from 'react-router-dom';
+import { Save, X, LayoutDashboard } from 'lucide-react';
 import { Button } from '../../components/common/Button.js';
 import { FormField } from '../../components/common/FormField.js';
 import warehouseApi from '../../services/warehouses.api.js';
 import workApi from '../../services/works.api.js';
 import type { Warehouse } from '../../services/warehouses.service.js';
-import type { Work } from '../../services/works.service.js';
 
 export function WarehouseForm() {
   const { id } = useParams();
+  const [searchParams] = useSearchParams();
+  const workIdFromQuery = searchParams.get('workId');
   const navigate = useNavigate();
-  const location = useLocation();
   const isEdit = !!id;
-
-  const queryParams = new URLSearchParams(location.search);
-  const initialWorkId = queryParams.get('workId');
 
   const [warehouse, setWarehouse] = useState<Partial<Warehouse>>({
     name: '',
-    workId: initialWorkId || ''
+    workId: workIdFromQuery || ''
   });
-  const [works, setWorks] = useState<Work[]>([]);
+  const [works, setWorks] = useState<any[]>([]);
   const [isLoading, setIsLoading] = useState(false);
-  const [loadingWorks, setLoadingWorks] = useState(true);
 
   useEffect(() => {
-    const loadData = async () => {
+    const loadWorks = async () => {
       try {
-        setLoadingWorks(true);
-        const worksData = await workApi.getAll();
-        setWorks(worksData);
-
-        if (isEdit && id) {
-          const warehouseData = await warehouseApi.getById(id);
-          setWarehouse(warehouseData);
-        }
+        const data = await workApi.getAll();
+        setWorks(data);
       } catch (error) {
-        alert('Erro ao carregar dados');
-      } finally {
-        setLoadingWorks(false);
+        alert('Erro ao carregar obras');
       }
     };
-    loadData();
+    loadWorks();
+
+    if (isEdit && id) {
+      const loadWarehouse = async () => {
+        try {
+          const data = await warehouseApi.getById(id);
+          setWarehouse(data);
+        } catch (error) {
+          alert('Erro ao carregar depósito');
+        }
+      };
+      loadWarehouse();
+    }
   }, [id, isEdit]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!warehouse.workId) {
-      alert('Por favor, selecione uma obra');
-      return;
-    }
     setIsLoading(true);
     try {
       if (isEdit && id) {
         await warehouseApi.update(id, warehouse);
       } else {
-        await warehouseApi.create(warehouse);
+        await warehouseApi.create(warehouse as any);
       }
       alert(isEdit ? 'Depósito atualizado!' : 'Depósito criado!');
       navigate('/warehouses');
@@ -73,12 +69,17 @@ export function WarehouseForm() {
         <h1 className="text-2xl font-bold text-gray-800">
           {isEdit ? 'Editar Depósito' : 'Novo Depósito'}
         </h1>
-        <Button variant="ghost" onClick={() => navigate('/warehouses')}>
-          <X size={18} />
-        </Button>
+        <div className="flex gap-2">
+          <Button variant="ghost" onClick={() => navigate('/dashboard')} title="Dashboard">
+            <LayoutDashboard size={18} />
+          </Button>
+          <Button variant="ghost" onClick={() => navigate('/warehouses')}>
+            <X size={18} />
+          </Button>
+        </div>
       </div>
 
-      <form onSubmit={handleSubmit} className="bg-white p-6 rounded-lg shadow">
+      <form onSubmit={handleSubmit} className="bg-white p-6 rounded-lg shadow space-y-4">
         <FormField
           label="Nome do Depósito"
           name="name"
@@ -86,21 +87,26 @@ export function WarehouseForm() {
           onChange={(val) => setWarehouse({ ...warehouse, name: val })}
           required
         />
-        <FormField
-          label="Obra Vinculada"
-          name="workId"
-          type="select"
-          options={works.map(w => ({ label: w.name, value: w.id }))}
-          value={warehouse.workId}
-          onChange={(val) => setWarehouse({ ...warehouse, workId: val })}
-          required
-        />
+
+        <div>
+          <label className="block text-sm font-medium text-gray-700 mb-1">Obra Associada</label>
+          <select
+            className="w-full p-2 border rounded-md"
+            value={warehouse.workId}
+            onChange={(e) => setWarehouse({ ...warehouse, workId: e.target.value })}
+            required
+            disabled={!!workIdFromQuery && !isEdit}
+          >
+            <option value="">Selecione a obra</option>
+            {works.map(w => <option key={w.id} value={w.id}>{w.name}</option>)}
+          </select>
+        </div>
 
         <div className="flex justify-end gap-3 mt-6">
           <Button variant="secondary" type="button" onClick={() => navigate('/warehouses')}>
             Cancelar
           </Button>
-          <Button type="submit" isLoading={isLoading} disabled={loadingWorks}>
+          <Button type="submit" isLoading={isLoading}>
             <Save size={18} className="mr-2" /> Salvar
           </Button>
         </div>

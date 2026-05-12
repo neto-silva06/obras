@@ -1,4 +1,4 @@
-import { Plus, Pencil, Trash2, ArrowLeft, Package } from 'lucide-react';
+import { Plus, Pencil, Trash2, ArrowLeft, Package, LayoutDashboard } from 'lucide-react';
 import { DataTable } from '../../components/common/DataTable.js';
 import { Button } from '../../components/common/Button.js';
 import warehouseApi from '../../services/warehouses.api.js';
@@ -88,9 +88,14 @@ export function WarehousesList() {
             {workId ? 'Depósitos da Obra' : 'Gestão de Depósitos'}
           </h1>
         </div>
-        <Button onClick={() => navigate(workId ? `/warehouses/new?workId=${workId}` : '/warehouses/new')}>
-          <Plus size={18} className="mr-2" /> Novo Depósito
-        </Button>
+        <div className="flex gap-2">
+          <Button variant="secondary" onClick={() => navigate('/dashboard')}>
+            <LayoutDashboard size={18} className="mr-2" /> Dashboard
+          </Button>
+          <Button onClick={() => navigate(workId ? `/warehouses/new?workId=${workId}` : '/warehouses/new')}>
+            <Plus size={18} className="mr-2" /> Novo Depósito
+          </Button>
+        </div>
       </div>
       <DataTable
         columns={columns}

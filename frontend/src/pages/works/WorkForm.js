@@ -1,7 +1,7 @@
 import { jsx as _jsx, jsxs as _jsxs } from "react/jsx-runtime";
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import { Save, X } from 'lucide-react';
+import { Save, X, LayoutDashboard } from 'lucide-react';
 import { Button } from '../../components/common/Button.js';
 import { FormField } from '../../components/common/FormField.js';
 import workApi from '../../services/works.api.js';
@@ -50,7 +50,7 @@ export function WorkForm() {
             setIsLoading(false);
         }
     };
-    return (_jsxs("div", { className: "p-6 max-w-2xl mx-auto", children: [_jsxs("div", { className: "flex justify-between items-center mb-6", children: [_jsx("h1", { className: "text-2xl font-bold text-gray-800", children: isEdit ? 'Editar Obra' : 'Nova Obra' }), _jsx(Button, { variant: "ghost", onClick: () => navigate('/works'), children: _jsx(X, { size: 18 }) })] }), _jsxs("form", { onSubmit: handleSubmit, className: "bg-white p-6 rounded-lg shadow", children: [_jsx(FormField, { label: "Nome da Obra", name: "name", value: work.name, onChange: (val) => setWork({ ...work, name: val }), required: true }), _jsx(FormField, { label: "Endere\u00E7o", name: "address", value: work.address, onChange: (val) => setWork({ ...work, address: val }), required: true }), _jsx(FormField, { label: "Descri\u00E7\u00E3o", name: "description", type: "textarea", value: work.description, onChange: (val) => setWork({ ...work, description: val }) }), _jsx(FormField, { label: "Status", name: "status", type: "select", options: [
+    return (_jsxs("div", { className: "p-6 max-w-2xl mx-auto", children: [_jsxs("div", { className: "flex justify-between items-center mb-6", children: [_jsx("h1", { className: "text-2xl font-bold text-gray-800", children: isEdit ? 'Editar Obra' : 'Nova Obra' }), _jsxs("div", { className: "flex gap-2", children: [_jsx(Button, { variant: "ghost", onClick: () => navigate('/dashboard'), title: "Dashboard", children: _jsx(LayoutDashboard, { size: 18 }) }), _jsx(Button, { variant: "ghost", onClick: () => navigate('/works'), children: _jsx(X, { size: 18 }) })] })] }), _jsxs("form", { onSubmit: handleSubmit, className: "bg-white p-6 rounded-lg shadow", children: [_jsx(FormField, { label: "Nome da Obra", name: "name", value: work.name, onChange: (val) => setWork({ ...work, name: val }), required: true }), _jsx(FormField, { label: "Endere\u00E7o", name: "address", value: work.address, onChange: (val) => setWork({ ...work, address: val }), required: true }), _jsx(FormField, { label: "Descri\u00E7\u00E3o", name: "description", type: "textarea", value: work.description, onChange: (val) => setWork({ ...work, description: val }) }), _jsx(FormField, { label: "Status", name: "status", type: "select", options: [
                             { label: 'Em Andamento', value: 'IN_PROGRESS' },
                             { label: 'Concluída', value: 'COMPLETED' },
                             { label: 'Suspensa', value: 'SUSPENDED' },

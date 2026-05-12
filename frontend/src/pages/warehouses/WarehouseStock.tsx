@@ -1,11 +1,12 @@
 import React, { useEffect, useState } from 'react';
-import { useParams, Link } from 'react-router-dom';
+import { useParams, Link, useNavigate } from 'react-router-dom';
 import { stockApi } from '../../services/stock.service.js';
 import materialApi from '../../services/materials.api.js';
 import warehouseApi from '../../services/warehouses.api.js';
 import { DataTable } from '../../components/common/DataTable.js';
 import { Button } from '../../components/common/Button.js';
 import { FormField } from '../../components/common/FormField.js';
+import { LayoutDashboard } from 'lucide-react';
 
 interface StockItem {
   id: string;
@@ -19,6 +20,7 @@ interface StockItem {
 
 export function WarehouseStock() {
   const { id } = useParams();
+  const navigate = useNavigate();
   const [stocks, setStocks] = useState<StockItem[]>([]);
   const [warehouse, setWarehouse] = useState<any>(null);
   const [materials, setMaterials] = useState<any[]>([]);
@@ -67,7 +69,12 @@ export function WarehouseStock() {
     <div className="p-8">
       <div className="flex justify-between items-center mb-6">
         <h1 className="text-2xl font-bold">Estoque: {warehouse?.name}</h1>
-        <Link to="/warehouses" className="text-blue-500">Voltar aos Depósitos</Link>
+        <div className="flex items-center gap-4">
+          <Button variant="ghost" onClick={() => navigate('/dashboard')} title="Dashboard">
+            <LayoutDashboard size={20} className="mr-2" /> Dashboard
+          </Button>
+          <Link to="/warehouses" className="text-blue-500 hover:underline">Voltar aos Depósitos</Link>
+        </div>
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
@@ -116,15 +123,15 @@ export function WarehouseStock() {
             <div className="flex gap-2">
               <Button
                 onClick={() => setAdjustment({ ...adjustment, operation: 'add' })}
-                className={adjustment.operation === 'add' ? 'bg-blue-600' : 'bg-gray-400'}
+                className={adjustment.operation === 'add' ? 'bg-indigo-600' : 'bg-gray-400'}
               >Entrada</Button>
               <Button
                 onClick={() => setAdjustment({ ...adjustment, operation: 'remove' })}
-                className={adjustment.operation === 'remove' ? 'bg-blue-600' : 'bg-gray-400'}
+                className={adjustment.operation === 'remove' ? 'bg-indigo-600' : 'bg-gray-400'}
               >Saída</Button>
               <Button
                 onClick={() => setAdjustment({ ...adjustment, operation: 'set' })}
-                className={adjustment.operation === 'set' ? 'bg-blue-600' : 'bg-gray-400'}
+                className={adjustment.operation === 'set' ? 'bg-indigo-600' : 'bg-gray-400'}
               >Ajuste</Button>
             </div>
 

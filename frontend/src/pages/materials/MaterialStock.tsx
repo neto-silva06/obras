@@ -1,9 +1,10 @@
 import React, { useEffect, useState } from 'react';
-import { useParams } from 'react-router-dom';
+import { useParams, Link, useNavigate } from 'react-router-dom';
 import { stockApi } from '../../services/stock.service.js';
 import materialApi from '../../services/materials.api.js';
 import { DataTable } from '../../components/common/DataTable.js';
-import { Link } from 'react-router-dom';
+import { LayoutDashboard } from 'lucide-react';
+import { Button } from '../../components/common/Button.js';
 
 interface StockItem {
   id: string;
@@ -16,6 +17,7 @@ interface StockItem {
 
 export function MaterialStock() {
   const { id } = useParams();
+  const navigate = useNavigate();
   const [stocks, setStocks] = useState<StockItem[]>([]);
   const [material, setMaterial] = useState<any>(null);
   const [loading, setLoading] = useState(true);
@@ -44,7 +46,12 @@ export function MaterialStock() {
     <div className="p-8">
       <div className="flex justify-between items-center mb-6">
         <h1 className="text-2xl font-bold">Distribuição: {material?.name}</h1>
-        <Link to="/materials" className="text-blue-500">Voltar aos Materiais</Link>
+        <div className="flex items-center gap-4">
+          <Button variant="ghost" onClick={() => navigate('/dashboard')} title="Dashboard">
+            <LayoutDashboard size={20} className="mr-2" /> Dashboard
+          </Button>
+          <Link to="/materials" className="text-blue-500 hover:underline">Voltar aos Materiais</Link>
+        </div>
       </div>
 
       <DataTable

@@ -62,6 +62,7 @@ export function Dashboard() {
           <Link to="/works/new" className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 transition">Cadastrar Obra</Link>
           <Link to="/materials/new" className="px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700 transition">Cadastrar Material</Link>
           <Link to="/warehouses/new" className="px-4 py-2 bg-purple-600 text-white rounded hover:bg-purple-700 transition">Criar Depósito</Link>
+          <Link to="/stock-movement" className="px-4 py-2 bg-orange-600 text-white rounded hover:bg-orange-700 transition">Movimentar Estoque</Link>
         </div>
       </div>
     </div>

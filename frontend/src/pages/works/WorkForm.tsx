@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import { Save, X } from 'lucide-react';
+import { Save, X, LayoutDashboard } from 'lucide-react';
 import { Button } from '../../components/common/Button.js';
 import { FormField } from '../../components/common/FormField.js';
 import workApi from '../../services/works.api.js';
@@ -57,9 +57,14 @@ export function WorkForm() {
         <h1 className="text-2xl font-bold text-gray-800">
           {isEdit ? 'Editar Obra' : 'Nova Obra'}
         </h1>
-        <Button variant="ghost" onClick={() => navigate('/works')}>
-          <X size={18} />
-        </Button>
+        <div className="flex gap-2">
+          <Button variant="ghost" onClick={() => navigate('/dashboard')} title="Dashboard">
+            <LayoutDashboard size={18} />
+          </Button>
+          <Button variant="ghost" onClick={() => navigate('/works')}>
+            <X size={18} />
+          </Button>
+        </div>
       </div>
 
       <form onSubmit={handleSubmit} className="bg-white p-6 rounded-lg shadow">
