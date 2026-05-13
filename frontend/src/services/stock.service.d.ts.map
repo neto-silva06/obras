@@ -1,1 +1,0 @@
-{"version":3,"file":"stock.service.d.ts","sourceRoot":"","sources":["stock.service.ts"],"names":[],"mappings":"AAEA,eAAO,MAAM,QAAQ;kCACW,MAAM;gCACR,MAAM;0BACZ,MAAM,cAAc,MAAM,YAAY,MAAM;mBAEnD;QAAE,WAAW,EAAE,MAAM,CAAC;QAAC,UAAU,EAAE,MAAM,CAAC;QAAC,QAAQ,EAAE,MAAM,CAAC;QAAC,SAAS,EAAE,KAAK,GAAG,QAAQ,GAAG,KAAK,CAAA;KAAE;CAElH,CAAC"}

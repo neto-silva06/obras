@@ -1,4 +1,5 @@
 import React from 'react';
+import { Spinner } from '../ui/Spinner';
 
 interface DataTableProps<T> {
   columns: {
@@ -18,40 +19,41 @@ export function DataTable<T>({
 }: DataTableProps<T>) {
   if (isLoading) {
     return (
-      <div className="flex justify-center items-center p-8">
-        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-gray-900"></div>
+      <div className="flex flex-col justify-center items-center p-12 bg-white rounded-lg border border-secondary-200">
+        <Spinner />
+        <p className="mt-4 text-sm text-secondary-500">Buscando dados...</p>
       </div>
     );
   }
 
   if (data.length === 0) {
     return (
-      <div className="text-center p-8 text-gray-500">
-        {emptyMessage}
+      <div className="flex flex-col items-center justify-center p-12 bg-white rounded-lg border border-secondary-200 border-dashed">
+        <p className="text-secondary-500 font-medium">{emptyMessage}</p>
       </div>
     );
   }
 
   return (
-    <div className="overflow-x-auto bg-white rounded-lg shadow">
-      <table className="min-w-full divide-y divide-gray-200">
-        <thead className="bg-gray-50">
+    <div className="overflow-x-auto bg-white rounded-lg border border-secondary-200 shadow-sm">
+      <table className="min-w-full divide-y divide-secondary-200">
+        <thead className="bg-secondary-50">
           <tr>
             {columns.map((col, index) => (
               <th
                 key={index}
-                className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+                className="px-6 py-4 text-left text-xs font-bold text-secondary-600 uppercase tracking-wider"
               >
                 {col.header}
               </th>
             ))}
           </tr>
         </thead>
-        <tbody className="divide-y divide-gray-200">
+        <tbody className="bg-white divide-y divide-secondary-200">
           {data.map((item, rowIndex) => (
-            <tr key={rowIndex} className="hover:bg-gray-50 transition-colors">
+            <tr key={rowIndex} className="hover:bg-secondary-50/50 transition-colors">
               {columns.map((col, colIndex) => (
-                <td key={colIndex} className="px-6 py-4 whitespace-nowrap text-sm text-gray-700">
+                <td key={colIndex} className="px-6 py-4 whitespace-nowrap text-sm text-secondary-700">
                   {typeof col.accessor === 'function'
                     ? col.accessor(item)
                     : (item as any)[col.accessor as string]}

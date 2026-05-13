@@ -1,8 +1,0 @@
-import { jsx as _jsx, jsxs as _jsxs } from "react/jsx-runtime";
-import React from 'react';
-export function FormField({ label, name, type = 'text', options, value, onChange, error, required = false }) {
-    const baseClasses = "block w-full px-3 py-2 border rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm transition-colors";
-    const errorClasses = error ? "border-red-500 text-red-600" : "border-gray-300 text-gray-900";
-    return (_jsxs("div", { className: "mb-4", children: [_jsxs("label", { className: "block text-sm font-medium text-gray-700 mb-1", children: [label, required && _jsx("span", { className: "text-red-500 ml-1", children: "*" })] }), type === 'select' ? (_jsxs("select", { name: name, value: value, onChange: (e) => onChange(e.target.value), className: `${baseClasses} ${errorClasses}`, children: [_jsx("option", { value: "", children: "Selecione..." }), options?.map((opt) => (_jsx("option", { value: opt.value, children: opt.label }, opt.value)))] })) : type === 'textarea' ? (_jsx("textarea", { name: name, value: value, onChange: (e) => onChange(e.target.value), className: `${baseClasses} ${errorClasses}`, rows: 3 })) : (_jsx("input", { type: type, name: name, value: value, onChange: (e) => onChange(e.target.value), className: `${baseClasses} ${errorClasses}` })), error && _jsx("p", { className: "mt-1 text-xs text-red-500", children: error })] }));
-}
-//# sourceMappingURL=FormField.js.map
