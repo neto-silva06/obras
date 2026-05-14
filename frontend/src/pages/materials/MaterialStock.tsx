@@ -1,22 +1,13 @@
 import React, { useEffect, useState } from 'react';
-<<<<<<< HEAD
-import { useParams, useNavigate } from 'react-router-dom';
-import { stockApi } from '../../services/stock.service';
-import materialApi from '../../services/materials.api';
-import { DataTable } from '../../components/common/DataTable';
-import { Button } from '../../components/ui/Button';
-import { Card } from '../../components/ui/Card';
-import { Spinner } from '../../components/ui/Spinner';
-import { ArrowLeft, Package, Warehouse } from 'lucide-react';
-import toast from 'react-hot-toast';
-=======
-import { useParams, Link, useNavigate } from 'react-router-dom';
+import { useParams, useNavigate, Link } from 'react-router-dom';
 import { stockApi } from '../../services/stock.service.js';
 import materialApi from '../../services/materials.api.js';
 import { DataTable } from '../../components/common/DataTable.js';
-import { LayoutDashboard } from 'lucide-react';
-import { Button } from '../../components/common/Button.js';
->>>>>>> main
+import { Button } from '../../components/ui/Button.js';
+import { Card } from '../../components/ui/Card.js';
+import { Spinner } from '../../components/ui/Spinner.js';
+import { ArrowLeft, Package, Warehouse, LayoutDashboard } from 'lucide-react';
+import toast from 'react-hot-toast';
 
 interface StockItem {
   id: string;
@@ -64,25 +55,22 @@ export function MaterialStock() {
   const totalQuantity = stocks.reduce((acc, curr) => acc + curr.quantity, 0);
 
   return (
-<<<<<<< HEAD
     <div className="space-y-6">
-      <div className="flex items-center gap-4">
-        <Button variant="outline" onClick={() => navigate('/materials')} className="p-2 rounded-full h-auto">
-          <ArrowLeft size={20} />
-        </Button>
-        <div>
-          <h1 className="text-2xl font-bold text-secondary-900">Distribuição de Material</h1>
-          <p className="text-secondary-500 text-sm">Visualizando estoque de {material?.name} em todos os depósitos.</p>
-=======
-    <div className="p-8">
-      <div className="flex justify-between items-center mb-6">
-        <h1 className="text-2xl font-bold">Distribuição: {material?.name}</h1>
+      <div className="flex items-center justify-between">
         <div className="flex items-center gap-4">
-          <Button variant="ghost" onClick={() => navigate('/dashboard')} title="Dashboard">
+          <Button variant="outline" onClick={() => navigate('/materials')} className="p-2 rounded-full h-auto">
+            <ArrowLeft size={20} />
+          </Button>
+          <div>
+            <h1 className="text-2xl font-bold text-secondary-900">Distribuição de Material</h1>
+            <p className="text-secondary-500 text-sm">Visualizando estoque de {material?.name} em todos os depósitos.</p>
+          </div>
+        </div>
+        <div className="flex items-center gap-4">
+          <Button variant="outline" onClick={() => navigate('/dashboard')} title="Dashboard">
             <LayoutDashboard size={20} className="mr-2" /> Dashboard
           </Button>
-          <Link to="/materials" className="text-blue-500 hover:underline">Voltar aos Materiais</Link>
->>>>>>> main
+          <Link to="/materials" className="text-blue-500 hover:underline text-sm font-medium">Voltar aos Materiais</Link>
         </div>
       </div>
 

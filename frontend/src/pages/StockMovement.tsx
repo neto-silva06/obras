@@ -1,13 +1,15 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { LayoutDashboard, Save } from 'lucide-react';
-import { Button } from '../components/common/Button.js';
-import { FormField } from '../components/common/FormField.js';
+import { Button } from '../components/ui/Button.js';
+import { Input } from '../components/ui/Input.js';
+import { Card } from '../components/ui/Card.js';
 import { stockApi } from '../services/stock.service.js';
 import materialApi from '../services/materials.api.js';
 import warehouseApi from '../services/warehouses.api.js';
 import type { Material } from '../services/materials.service.js';
 import type { Warehouse } from '../services/warehouses.service.js';
+import toast from 'react-hot-toast';
 
 export function StockMovement() {
   const navigate = useNavigate();
@@ -33,7 +35,7 @@ export function StockMovement() {
         setWarehouses(wRes);
         setMaterials(mRes);
       } catch (error) {
-        alert('Erro ao carregar dados para movimentação');
+        toast.error('Erro ao carregar dados para movimentação');
       } finally {
         setLoading(false);
       }
@@ -44,17 +46,17 @@ export function StockMovement() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!formData.warehouseId || !formData.materialId || formData.quantity <= 0) {
-      alert('Por favor, preencha todos os campos corretamente.');
+      toast.error('Por favor, preencha todos os campos corretamente.');
       return;
     }
 
     setSubmitting(true);
     try {
       await stockApi.adjust(formData);
-      alert('Movimentação realizada com sucesso!');
+      toast.success('Movimentação realizada com sucesso!');
       navigate('/dashboard');
     } catch (error: any) {
-      alert(error.response?.data?.message || 'Erro ao realizar movimentação');
+      toast.error(error.response?.data?.message || 'Erro ao realizar movimentação');
     } finally {
       setSubmitting(false);
     }
@@ -63,96 +65,98 @@ export function StockMovement() {
   if (loading) return <div className="p-8 text-center text-gray-600">Carregando...</div>;
 
   return (
-    <div className="p-6 max-w-2xl mx-auto">
-      <div className="flex justify-between items-center mb-6">
-        <h1 className="text-2xl font-bold text-gray-800">Movimentação de Estoque</h1>
-        <Button variant="ghost" onClick={() => navigate('/dashboard')} title="Voltar ao Dashboard">
+    <div className="p-6 max-w-2xl mx-auto space-y-6">
+      <div className="flex justify-between items-center">
+        <h1 className="text-2xl font-bold text-secondary-900">Movimentação de Estoque</h1>
+        <Button variant="outline" onClick={() => navigate('/dashboard')} title="Voltar ao Dashboard">
           <LayoutDashboard size={20} className="mr-2" /> Dashboard
         </Button>
       </div>
 
-      <form onSubmit={handleSubmit} className="bg-white p-6 rounded-lg shadow space-y-6">
-        <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">Depósito</label>
-          <select
-            className="w-full p-2 border rounded-md focus:ring-2 focus:ring-indigo-500 outline-none"
-            value={formData.warehouseId}
-            onChange={(e) => setFormData({ ...formData, warehouseId: e.target.value })}
-            required
-          >
-            <option value="">Selecione o depósito</option>
-            {warehouses.map(w => <option key={w.id} value={w.id}>{w.name}</option>)}
-          </select>
-        </div>
-
-        <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">Material</label>
-          <select
-            className="w-full p-2 border rounded-md focus:ring-2 focus:ring-indigo-500 outline-none"
-            value={formData.materialId}
-            onChange={(e) => setFormData({ ...formData, materialId: e.target.value })}
-            required
-          >
-            <option value="">Selecione o material</option>
-            {materials.map(m => (
-              <option key={m.id} value={m.id}>
-                {m.name} ({m.unit})
-              </option>
-            ))}
-          </select>
-        </div>
-
-        <FormField
-          label="Quantidade"
-          name="quantity"
-          type="number"
-          value={formData.quantity}
-          onChange={(val) => setFormData({ ...formData, quantity: Number(val) })}
-          required
-        />
-
-        <div>
-          <label className="block text-sm font-medium text-gray-700 mb-2">Tipo de Operação</label>
-          <div className="flex gap-4">
-            <label className="flex items-center cursor-pointer">
-              <input
-                type="radio"
-                className="mr-2"
-                name="operation"
-                checked={formData.operation === 'add'}
-                onChange={() => setFormData({ ...formData, operation: 'add' })}
-              />
-              Entrada (+)
-            </label>
-            <label className="flex items-center cursor-pointer">
-              <input
-                type="radio"
-                className="mr-2"
-                name="operation"
-                checked={formData.operation === 'remove'}
-                onChange={() => setFormData({ ...formData, operation: 'remove' })}
-              />
-              Saída (-)
-            </label>
-            <label className="flex items-center cursor-pointer">
-              <input
-                type="radio"
-                className="mr-2"
-                name="operation"
-                checked={formData.operation === 'set'}
-                onChange={() => setFormData({ ...formData, operation: 'set' })}
-              />
-              Ajuste (Fixo)
-            </label>
+      <Card>
+        <form onSubmit={handleSubmit} className="space-y-6">
+          <div>
+            <label className="block text-sm font-medium text-secondary-700 mb-1">Depósito</label>
+            <select
+              className="w-full p-2 border border-secondary-300 rounded-md focus:ring-2 focus:ring-primary-500 outline-none bg-white"
+              value={formData.warehouseId}
+              onChange={(e) => setFormData({ ...formData, warehouseId: e.target.value })}
+              required
+            >
+              <option value="">Selecione o depósito</option>
+              {warehouses.map(w => <option key={w.id} value={w.id}>{w.name}</option>)}
+            </select>
           </div>
-        </div>
 
-        <div className="flex justify-end pt-4 border-t">
-          <Button type="submit" isLoading={submitting} className="w-full sm:w-auto">
-            <Save size={18} className="mr-2" /> Confirmar Movimentação
-          </Button>
-        </div>
-      </form>
+          <div>
+            <label className="block text-sm font-medium text-secondary-700 mb-1">Material</label>
+            <select
+              className="w-full p-2 border border-secondary-300 rounded-md focus:ring-2 focus:ring-primary-500 outline-none bg-white"
+              value={formData.materialId}
+              onChange={(e) => setFormData({ ...formData, materialId: e.target.value })}
+              required
+            >
+              <option value="">Selecione o material</option>
+              {materials.map(m => (
+                <option key={m.id} value={m.id}>
+                  {m.name} ({m.unit})
+                </option>
+              ))}
+            </select>
+          </div>
+
+          <Input
+            label="Quantidade"
+            type="number"
+            step="0.01"
+            value={formData.quantity}
+            onChange={(e) => setFormData({ ...formData, quantity: Number(e.target.value) })}
+            required
+          />
+
+          <div>
+            <label className="block text-sm font-medium text-secondary-700 mb-2">Tipo de Operação</label>
+            <div className="flex gap-4">
+              <label className="flex items-center cursor-pointer text-secondary-700">
+                <input
+                  type="radio"
+                  className="mr-2"
+                  name="operation"
+                  checked={formData.operation === 'add'}
+                  onChange={() => setFormData({ ...formData, operation: 'add' })}
+                />
+                Entrada (+)
+              </label>
+              <label className="flex items-center cursor-pointer text-secondary-700">
+                <input
+                  type="radio"
+                  className="mr-2"
+                  name="operation"
+                  checked={formData.operation === 'remove'}
+                  onChange={() => setFormData({ ...formData, operation: 'remove' })}
+                />
+                Saída (-)
+              </label>
+              <label className="flex items-center cursor-pointer text-secondary-700">
+                <input
+                  type="radio"
+                  className="mr-2"
+                  name="operation"
+                  checked={formData.operation === 'set'}
+                  onChange={() => setFormData({ ...formData, operation: 'set' })}
+                />
+                Ajuste (Fixo)
+              </label>
+            </div>
+          </div>
+
+          <div className="flex justify-end pt-4 border-t border-secondary-100">
+            <Button type="submit" isLoading={submitting} className="w-full sm:w-auto">
+              <Save size={18} className="mr-2" /> Confirmar Movimentação
+            </Button>
+          </div>
+        </form>
+      </Card>
     </div>
   );
 }
