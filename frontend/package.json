@@ -10,6 +10,7 @@
     "axios": "^1.16.0",
     "esbuild": "^0.28.0",
     "lucide-react": "^0.263.1",
+    "react-hot-toast": "^2.6.0",
     "react-router-dom": "^6.30.3"
   },
   "devDependencies": {

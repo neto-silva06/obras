@@ -1,4 +1,4 @@
-import api from './api.js';
+import api from './api';
 
 export const stockApi = {
   getByWarehouse: (warehouseId: string) => api.get(`/stocks/warehouse/${warehouseId}`),

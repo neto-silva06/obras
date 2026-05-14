@@ -1,52 +1,58 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
 
-interface AuthContextType {
-  user: any | null;
-  token: string | null;
-  isAuthenticated: boolean;
-  login: (token: string, user: any) => void;
-  logout: () => void;
+interface User {
+  id: string;
+  name: string;
+  email: string;
 }
 
-const AuthContext = createContext<AuthContextType | undefined>(undefined);
+interface AuthContextType {
+  isAuthenticated: boolean;
+  user: User | null;
+  login: (token: string, user: User) => void;
+  logout: () => void;
+  loading: boolean;
+}
 
-export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const [user, setUser] = useState<any>(null);
-  const [token, setToken] = useState<string | null>(localStorage.getItem('token'));
-  const [isAuthenticated, setIsAuthenticated] = useState<boolean>(!!localStorage.getItem('token'));
+const AuthContext = createContext<AuthContextType | null>(null);
+
+export function AuthProvider({ children }: { children: React.ReactNode }) {
+  const [user, setUser] = useState<User | null>(null);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    if (token) {
-      // Opcional: validar token com o backend aqui
-      setUser({ name: 'Usuário' }); // Placeholder
-    }
-  }, [token]);
+    const savedUser = localStorage.getItem('@App:user');
+    const token = localStorage.getItem('@App:token');
 
-  const login = (newToken: string, userData: any) => {
-    localStorage.setItem('token', newToken);
-    setToken(newToken);
-    setUser(userData);
-    setIsAuthenticated(true);
+    if (savedUser && token) {
+      setUser(JSON.parse(savedUser));
+    }
+    setLoading(false);
+  }, []);
+
+  const login = (token: string, user: User) => {
+    localStorage.setItem('@App:token', token);
+    localStorage.setItem('@App:user', JSON.stringify(user));
+    setUser(user);
   };
 
   const logout = () => {
-    localStorage.removeItem('token');
-    setToken(null);
+    localStorage.removeItem('@App:token');
+    localStorage.removeItem('@App:user');
     setUser(null);
-    setIsAuthenticated(false);
   };
 
   return (
-    <AuthContext.Provider value={{ user, token, isAuthenticated, login, logout }}>
+    <AuthContext.Provider value={{ isAuthenticated: !!user, user, login, logout, loading }}>
       {children}
     </AuthContext.Provider>
   );
-};
+}
 
-export const useAuth = () => {
+export function useAuth() {
   const context = useContext(AuthContext);
   if (!context) {
     throw new Error('useAuth must be used within an AuthProvider');
   }
   return context;
-};
+}
