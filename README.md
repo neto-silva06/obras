@@ -8,11 +8,11 @@ Sistema completo para controle de obras, depósitos, materiais e estoque, desenv
 - **Banco de Dados:** PostgreSQL
 - **ORM:** Prisma
 - **Autenticação:** JWT (JSON Web Tokens)
-- **Frontend:** React 19, Vite, TypeScript, Lucide React, Axios
+- **Frontend:** React 19, Vite, TypeScript
 
 ---
 
-## 🛠️ Guia de Inicialização
+## 🛠️ Guia de Inicialização (Monorepo)
 
 ### 1. Pré-requisitos
 - Node.js (versão LTS recomendada)
@@ -29,20 +29,21 @@ Sistema completo para controle de obras, depósitos, materiais e estoque, desenv
    npm install
    ```
 3. Configure as variáveis de ambiente:
-   Crie um arquivo `.env` na raiz do backend com as seguintes chaves:
+   Crie um arquivo `.env` na pasta `backend/` com as seguintes chaves:
    ```env
    DATABASE_URL="postgresql://USUARIO:SENHA@localhost:5432/nome_do_banco?schema=public"
    JWT_SECRET="sua_chave_secreta_aqui"
-   PORT=3000
+   PORT=3333
    ```
-4. Execute as migrações do banco de dados:
+4. Gere o cliente Prisma e execute as migrações:
    ```bash
-   npx prisma migrate dev --name init
+   npx prisma generate
+   npx prisma migrate dev
    ```
 5. Inicie o servidor:
-   ```bash
-   npm run dev
-   ```
+   - Desenvolvimento: npm run d_e_v
+   - Produção (Build): npm run build && npm s_t_a_r_t
+
    *A API estará disponível em `http://localhost:3333`*
 
 ### 3. Configuração do Frontend
@@ -56,25 +57,15 @@ Sistema completo para controle de obras, depósitos, materiais e estoque, desenv
    npm install
    ```
 3. Inicie o servidor de desenvolvimento:
-   ```bash
-   npm run dev
-   ```
-   *Acesse o link indicado no terminal (geralmente `http://localhost:5173`)*
+   npm run d_e_v
 
 ---
 
-## 📖 Fluxo de Uso do Sistema
+## ☁️ Deploy no Render
 
-1. **Cadastro/Login:** Crie sua conta na tela de registro e faça login para acessar o sistema.
-2. **Cadastro de Obras:** Comece cadastrando as obras sob sua gestão.
-3. **Criação de Depósitos:** Para cada obra, crie os depósitos onde os materiais serão armazenados.
-4. **Catálogo de Materiais:** Cadastre os materiais (ex: Cimento, Areia) e suas unidades de medida.
-5. **Controle de Estoque:**
-   - Acesse um depósito e adicione materiais para realizar a "entrada".
-   - Remova quantidades para registrar a "saída" (uso na obra).
-   - Monitore os alertas de estoque baixo (destacados em vermelho).
+Para configurar o deploy da API no Render:
+1. **Root Directory:** `backend`
+2. **Build Command:** `npm install && npm run build`
+3. **Start Command:** `npm s_t_a_r_t`
+4. **Environment Variables:** Certifique-se de configurar `DATABASE_URL` e `JWT_SECRET` no painel do Render.
 
-## 📂 Estrutura de Pastas
-
-- `backend/src`: Camadas de Interface, Aplicação, Domínio e Infraestrutura.
-- `frontend/src`: Organização modular por serviços, componentes, hooks e páginas.

@@ -1,11 +1,19 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+<<<<<<< HEAD
 import { Plus, Pencil, Trash2, Package, Search } from 'lucide-react';
 import { DataTable } from '../../components/common/DataTable';
 import { Button } from '../../components/ui/Button';
 import materialApi from '../../services/materials.api';
 import type { Material } from '../../services/materials.service';
 import toast from 'react-hot-toast';
+=======
+import { Plus, Pencil, Trash2, Package, LayoutDashboard } from 'lucide-react';
+import { DataTable } from '../../components/common/DataTable.js';
+import { Button } from '../../components/common/Button.js';
+import materialApi from '../../services/materials.api.js';
+import type { Material } from '../../services/materials.service.js';
+>>>>>>> main
 
 export function MaterialsList() {
   const navigate = useNavigate();
@@ -101,6 +109,7 @@ export function MaterialsList() {
   ];
 
   return (
+<<<<<<< HEAD
     <div className="space-y-6">
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
         <div>
@@ -110,6 +119,19 @@ export function MaterialsList() {
         <Button onClick={() => navigate('/materials/new')}>
           <Plus size={18} className="mr-2" /> Novo Material
         </Button>
+=======
+    <div className="p-6">
+      <div className="flex justify-between items-center mb-6">
+        <h1 className="text-2xl font-bold text-gray-800">Catálogo de Materiais</h1>
+        <div className="flex gap-2">
+          <Button variant="secondary" onClick={() => navigate('/dashboard')}>
+            <LayoutDashboard size={18} className="mr-2" /> Dashboard
+          </Button>
+          <Button onClick={() => navigate('/materials/new')}>
+            <Plus size={18} className="mr-2" /> Novo Material
+          </Button>
+        </div>
+>>>>>>> main
       </div>
 
       <div className="relative max-w-md">

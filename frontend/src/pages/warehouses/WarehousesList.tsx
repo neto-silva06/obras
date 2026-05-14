@@ -1,3 +1,12 @@
+<<<<<<< HEAD
+=======
+import { Plus, Pencil, Trash2, ArrowLeft, Package, LayoutDashboard } from 'lucide-react';
+import { DataTable } from '../../components/common/DataTable.js';
+import { Button } from '../../components/common/Button.js';
+import warehouseApi from '../../services/warehouses.api.js';
+import type { Warehouse } from '../../services/warehouses.service.js';
+import { useNavigate, useParams } from 'react-router-dom';
+>>>>>>> main
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { Plus, Pencil, Trash2, ArrowLeft, Package, Warehouse, Search } from 'lucide-react';
@@ -115,9 +124,14 @@ export function WarehousesList() {
             <p className="text-secondary-500 text-sm">Controle de locais físicos para armazenamento de materiais.</p>
           </div>
         </div>
-        <Button onClick={() => navigate(workId ? `/warehouses/new?workId=${workId}` : '/warehouses/new')}>
-          <Plus size={18} className="mr-2" /> Novo Depósito
-        </Button>
+        <div className="flex gap-2">
+          <Button variant="secondary" onClick={() => navigate('/dashboard')}>
+            <LayoutDashboard size={18} className="mr-2" /> Dashboard
+          </Button>
+          <Button onClick={() => navigate(workId ? `/warehouses/new?workId=${workId}` : '/warehouses/new')}>
+            <Plus size={18} className="mr-2" /> Novo Depósito
+          </Button>
+        </div>
       </div>
 
       <div className="relative max-w-md">

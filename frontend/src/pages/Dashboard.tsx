@@ -96,6 +96,7 @@ export function Dashboard() {
         ))}
       </div>
 
+<<<<<<< HEAD
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
         <Card title="Ações Rápidas">
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
@@ -148,6 +149,16 @@ export function Dashboard() {
             </div>
           </div>
         </Card>
+=======
+      <div className="bg-white p-6 rounded-lg shadow-sm border border-gray-200">
+        <h2 className="text-xl font-semibold mb-4">Ações Rápidas</h2>
+        <div className="flex gap-4">
+          <Link to="/works/new" className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 transition">Cadastrar Obra</Link>
+          <Link to="/materials/new" className="px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700 transition">Cadastrar Material</Link>
+          <Link to="/warehouses/new" className="px-4 py-2 bg-purple-600 text-white rounded hover:bg-purple-700 transition">Criar Depósito</Link>
+          <Link to="/stock-movement" className="px-4 py-2 bg-orange-600 text-white rounded hover:bg-orange-700 transition">Movimentar Estoque</Link>
+        </div>
+>>>>>>> main
       </div>
     </div>
   );

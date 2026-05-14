@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+<<<<<<< HEAD
 import { useParams, useNavigate } from 'react-router-dom';
 import { stockApi } from '../../services/stock.service';
 import materialApi from '../../services/materials.api';
@@ -10,6 +11,16 @@ import { Input } from '../../components/ui/Input';
 import { Spinner } from '../../components/ui/Spinner';
 import { ArrowLeft, PlusCircle, MinusCircle, RefreshCcw, Package } from 'lucide-react';
 import toast from 'react-hot-toast';
+=======
+import { useParams, Link, useNavigate } from 'react-router-dom';
+import { stockApi } from '../../services/stock.service.js';
+import materialApi from '../../services/materials.api.js';
+import warehouseApi from '../../services/warehouses.api.js';
+import { DataTable } from '../../components/common/DataTable.js';
+import { Button } from '../../components/common/Button.js';
+import { FormField } from '../../components/common/FormField.js';
+import { LayoutDashboard } from 'lucide-react';
+>>>>>>> main
 
 interface StockItem {
   id: string;
@@ -88,6 +99,7 @@ export function WarehouseStock() {
   );
 
   return (
+<<<<<<< HEAD
     <div className="space-y-6">
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
         <div className="flex items-center gap-4">
@@ -98,6 +110,16 @@ export function WarehouseStock() {
             <h1 className="text-2xl font-bold text-secondary-900">Estoque: {warehouse?.name}</h1>
             <p className="text-secondary-500 text-sm">Gerencie entradas e saídas de materiais neste local.</p>
           </div>
+=======
+    <div className="p-8">
+      <div className="flex justify-between items-center mb-6">
+        <h1 className="text-2xl font-bold">Estoque: {warehouse?.name}</h1>
+        <div className="flex items-center gap-4">
+          <Button variant="ghost" onClick={() => navigate('/dashboard')} title="Dashboard">
+            <LayoutDashboard size={20} className="mr-2" /> Dashboard
+          </Button>
+          <Link to="/warehouses" className="text-blue-500 hover:underline">Voltar aos Depósitos</Link>
+>>>>>>> main
         </div>
       </div>
 
@@ -210,7 +232,41 @@ export function WarehouseStock() {
                 Confirmar Operação
               </Button>
             </div>
+<<<<<<< HEAD
           </Card>
+=======
+
+            <FormField
+              name="quantity"
+              label="Quantidade"
+              type="number"
+              value={adjustment.quantity}
+              onChange={(val) => setAdjustment({ ...adjustment, quantity: Number(val) })}
+            />
+
+            <div className="flex gap-2">
+              <Button
+                onClick={() => setAdjustment({ ...adjustment, operation: 'add' })}
+                className={adjustment.operation === 'add' ? 'bg-indigo-600' : 'bg-gray-400'}
+              >Entrada</Button>
+              <Button
+                onClick={() => setAdjustment({ ...adjustment, operation: 'remove' })}
+                className={adjustment.operation === 'remove' ? 'bg-indigo-600' : 'bg-gray-400'}
+              >Saída</Button>
+              <Button
+                onClick={() => setAdjustment({ ...adjustment, operation: 'set' })}
+                className={adjustment.operation === 'set' ? 'bg-indigo-600' : 'bg-gray-400'}
+              >Ajuste</Button>
+            </div>
+
+            <Button
+              className="w-full mt-4 bg-green-600 text-white"
+              onClick={handleAdjust}
+            >
+              Confirmar Operação
+            </Button>
+          </div>
+>>>>>>> main
         </div>
       </div>
     </div>
