@@ -1,10 +1,10 @@
 import React, { useEffect, useState } from 'react';
-import api from '../services/api';
+import api from '../services/api.js';
 import { Link } from 'react-router-dom';
-import { Card } from '../components/ui/Card';
-import { Button } from '../components/ui/Button';
-import { Spinner } from '../components/ui/Spinner';
-import { HardHat, Package, Warehouse, PlusCircle, ArrowRight } from 'lucide-react';
+import { Card } from '../components/ui/Card.js';
+import { Button } from '../components/ui/Button.js';
+import { Spinner } from '../components/ui/Spinner.js';
+import { HardHat, Package, Warehouse, PlusCircle, ArrowRight, RefreshCcw } from 'lucide-react';
 
 export function Dashboard() {
   const [metrics, setMetrics] = useState({
@@ -96,7 +96,6 @@ export function Dashboard() {
         ))}
       </div>
 
-<<<<<<< HEAD
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
         <Card title="Ações Rápidas">
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
@@ -127,6 +126,15 @@ export function Dashboard() {
                 </div>
               </div>
             </Link>
+            <Link to="/stock-movement">
+              <div className="p-4 border border-secondary-100 rounded-lg hover:bg-indigo-50 hover:border-indigo-200 transition-all group flex items-center gap-3">
+                <RefreshCcw className="text-indigo-600" size={24} />
+                <div>
+                  <p className="font-semibold text-secondary-900">Movimentar Estoque</p>
+                  <p className="text-xs text-secondary-500">Registrar entradas e saídas</p>
+                </div>
+              </div>
+            </Link>
           </div>
         </Card>
 
@@ -149,16 +157,6 @@ export function Dashboard() {
             </div>
           </div>
         </Card>
-=======
-      <div className="bg-white p-6 rounded-lg shadow-sm border border-gray-200">
-        <h2 className="text-xl font-semibold mb-4">Ações Rápidas</h2>
-        <div className="flex gap-4">
-          <Link to="/works/new" className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 transition">Cadastrar Obra</Link>
-          <Link to="/materials/new" className="px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700 transition">Cadastrar Material</Link>
-          <Link to="/warehouses/new" className="px-4 py-2 bg-purple-600 text-white rounded hover:bg-purple-700 transition">Criar Depósito</Link>
-          <Link to="/stock-movement" className="px-4 py-2 bg-orange-600 text-white rounded hover:bg-orange-700 transition">Movimentar Estoque</Link>
-        </div>
->>>>>>> main
       </div>
     </div>
   );

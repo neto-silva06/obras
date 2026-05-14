@@ -1,19 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-<<<<<<< HEAD
-import { Plus, Pencil, Trash2, HardHat, Search } from 'lucide-react';
-import { DataTable } from '../../components/common/DataTable';
-import { Button } from '../../components/ui/Button';
-import workApi from '../../services/works.api';
-import type { Work } from '../../services/works.service';
-import toast from 'react-hot-toast';
-=======
-import { Plus, Pencil, Trash2, LayoutDashboard } from 'lucide-react';
+import { Plus, Pencil, Trash2, HardHat, Search, LayoutDashboard } from 'lucide-react';
 import { DataTable } from '../../components/common/DataTable.js';
-import { Button } from '../../components/common/Button.js';
+import { Button } from '../../components/ui/Button.js';
 import workApi from '../../services/works.api.js';
 import type { Work } from '../../services/works.service.js';
->>>>>>> main
+import toast from 'react-hot-toast';
 
 export function WorksList() {
   const navigate = useNavigate();
@@ -115,29 +107,20 @@ export function WorksList() {
   ];
 
   return (
-<<<<<<< HEAD
     <div className="space-y-6">
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
         <div>
           <h1 className="text-2xl font-bold text-secondary-900">Gestão de Obras</h1>
           <p className="text-secondary-500 text-sm">Visualize e gerencie todos os empreendimentos ativos.</p>
         </div>
-        <Button onClick={() => navigate('/works/new')}>
-          <Plus size={18} className="mr-2" /> Nova Obra
-        </Button>
-=======
-    <div className="p-6">
-      <div className="flex justify-between items-center mb-6">
-        <h1 className="text-2xl font-bold text-gray-800">Gestão de Obras</h1>
         <div className="flex gap-2">
-          <Button variant="secondary" onClick={() => navigate('/dashboard')}>
+          <Button variant="outline" onClick={() => navigate('/dashboard')}>
             <LayoutDashboard size={18} className="mr-2" /> Dashboard
           </Button>
           <Button onClick={() => navigate('/works/new')}>
             <Plus size={18} className="mr-2" /> Nova Obra
           </Button>
         </div>
->>>>>>> main
       </div>
 
       <div className="relative max-w-md">

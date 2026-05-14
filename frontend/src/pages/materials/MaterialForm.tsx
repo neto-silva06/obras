@@ -1,20 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-<<<<<<< HEAD
-import { Save, ArrowLeft } from 'lucide-react';
-import { Button } from '../../components/ui/Button';
-import { Input } from '../../components/ui/Input';
-import { Card } from '../../components/ui/Card';
-import materialApi from '../../services/materials.api';
-import type { Material } from '../../services/materials.service';
-import toast from 'react-hot-toast';
-=======
-import { Save, X, LayoutDashboard } from 'lucide-react';
-import { Button } from '../../components/common/Button.js';
-import { FormField } from '../../components/common/FormField.js';
+import { Save, ArrowLeft, LayoutDashboard } from 'lucide-react';
+import { Button } from '../../components/ui/Button.js';
+import { Input } from '../../components/ui/Input.js';
+import { Card } from '../../components/ui/Card.js';
 import materialApi from '../../services/materials.api.js';
 import type { Material } from '../../services/materials.service.js';
->>>>>>> main
+import toast from 'react-hot-toast';
 
 export function MaterialForm() {
   const { id } = useParams();
@@ -67,34 +59,24 @@ export function MaterialForm() {
   };
 
   return (
-<<<<<<< HEAD
     <div className="max-w-3xl mx-auto space-y-6">
-      <div className="flex items-center gap-4">
-        <Button variant="outline" onClick={() => navigate('/materials')} className="p-2 rounded-full h-auto">
-          <ArrowLeft size={20} />
-        </Button>
-        <div>
-          <h1 className="text-2xl font-bold text-secondary-900">
-            {isEdit ? 'Editar Material' : 'Novo Material'}
-          </h1>
-          <p className="text-secondary-500 text-sm">
-            {isEdit ? 'Atualize as especificações do item.' : 'Cadastre um novo item no catálogo de materiais.'}
-          </p>
-=======
-    <div className="p-6 max-w-2xl mx-auto">
-      <div className="flex justify-between items-center mb-6">
-        <h1 className="text-2xl font-bold text-gray-800">
-          {isEdit ? 'Editar Material' : 'Novo Material'}
-        </h1>
-        <div className="flex gap-2">
-          <Button variant="ghost" onClick={() => navigate('/dashboard')} title="Dashboard">
-            <LayoutDashboard size={18} />
+      <div className="flex items-center justify-between">
+        <div className="flex items-center gap-4">
+          <Button variant="outline" onClick={() => navigate('/materials')} className="p-2 rounded-full h-auto">
+            <ArrowLeft size={20} />
           </Button>
-          <Button variant="ghost" onClick={() => navigate('/materials')}>
-            <X size={18} />
-          </Button>
->>>>>>> main
+          <div>
+            <h1 className="text-2xl font-bold text-secondary-900">
+              {isEdit ? 'Editar Material' : 'Novo Material'}
+            </h1>
+            <p className="text-secondary-500 text-sm">
+              {isEdit ? 'Atualize as especificações do item.' : 'Cadastre um novo item no catálogo de materiais.'}
+            </p>
+          </div>
         </div>
+        <Button variant="outline" onClick={() => navigate('/dashboard')} title="Dashboard">
+          <LayoutDashboard size={20} />
+        </Button>
       </div>
 
       <Card>

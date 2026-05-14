@@ -1,19 +1,10 @@
-<<<<<<< HEAD
-=======
-import { Plus, Pencil, Trash2, ArrowLeft, Package, LayoutDashboard } from 'lucide-react';
-import { DataTable } from '../../components/common/DataTable.js';
-import { Button } from '../../components/common/Button.js';
-import warehouseApi from '../../services/warehouses.api.js';
-import type { Warehouse } from '../../services/warehouses.service.js';
-import { useNavigate, useParams } from 'react-router-dom';
->>>>>>> main
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import { Plus, Pencil, Trash2, ArrowLeft, Package, Warehouse, Search } from 'lucide-react';
-import { DataTable } from '../../components/common/DataTable';
-import { Button } from '../../components/ui/Button';
-import warehouseApi from '../../services/warehouses.api';
-import type { Warehouse as WarehouseType } from '../../services/warehouses.service';
+import { Plus, Pencil, Trash2, ArrowLeft, Package, Warehouse, Search, LayoutDashboard } from 'lucide-react';
+import { DataTable } from '../../components/common/DataTable.js';
+import { Button } from '../../components/ui/Button.js';
+import warehouseApi from '../../services/warehouses.api.js';
+import type { Warehouse as WarehouseType } from '../../services/warehouses.service.js';
 import toast from 'react-hot-toast';
 
 export function WarehousesList() {
