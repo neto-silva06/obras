@@ -2,16 +2,15 @@ import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react';
 import { VitePWA } from 'vite-plugin-pwa';
 
-<<<<<<< HEAD
+
 // https://vitejs.dev/config/
-=======
->>>>>>> main
+
 export default defineConfig({
   plugins: [
     react(),
     VitePWA({
       registerType: 'autoUpdate',
-<<<<<<< HEAD
+
       includeAssets: ['favicon.ico', 'apple-touch-icon.png', 'mask-icon.svg'],
       manifest: {
         name: 'Gestão de Obras',
@@ -47,7 +46,7 @@ export default defineConfig({
       },
     },
   },
-=======
+
       includeAssets: ['favicon.svg', 'icon.svg'],
       manifest: {
         name: 'Gerenciamento de Obras',
@@ -86,5 +85,4 @@ export default defineConfig({
       }
     })
   ]
->>>>>>> main
 });
