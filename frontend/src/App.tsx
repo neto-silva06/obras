@@ -7,6 +7,8 @@ import RegisterPage from './pages/RegisterPage.js';
 import { Dashboard } from './pages/Dashboard.js';
 import { WorksList } from './pages/works/WorksList.js';
 import { WorkForm } from './pages/works/WorkForm.js';
+import { WorkDiary } from './pages/works/WorkDiary.js';
+import { WorkCostReport } from './pages/works/WorkCostReport.js';
 import { MaterialsList } from './pages/materials/MaterialsList.js';
 import { MaterialForm } from './pages/materials/MaterialForm.js';
 import { MaterialStock } from './pages/materials/MaterialStock.js';
@@ -16,6 +18,8 @@ import { WarehouseStock } from './pages/warehouses/WarehouseStock.js';
 import { StockMovement } from './pages/StockMovement.js';
 import { UserList } from './pages/users/UserList.js';
 import { UserForm } from './pages/users/UserForm.js';
+import { EmployeeList } from './pages/employees/EmployeeList.js';
+import { EmployeeForm } from './pages/employees/EmployeeForm.js';
 import { StockHistory } from './pages/history/StockHistory.js';
 import { Layout } from './components/Layout.js';
 import { Toaster } from 'react-hot-toast';
@@ -38,6 +42,8 @@ const AppRoutes = () => {
           <Route path="/works/:id/edit" element={<PrivateRoute requiredRole="ADMIN" />} >
             <Route index element={<WorkForm />} />
           </Route>
+          <Route path="/works/:workId/diary" element={<WorkDiary />} />
+          <Route path="/works/:workId/report" element={<WorkCostReport />} />
 
           {/* Materiais */}
           <Route path="/materials" element={<MaterialsList />} />
@@ -63,6 +69,15 @@ const AppRoutes = () => {
           {/* Movimentações */}
           <Route path="/stock-movement" element={<StockMovement />} />
           <Route path="/stock-history" element={<StockHistory />} />
+
+          {/* Funcionários */}
+          <Route path="/employees" element={<EmployeeList />} />
+          <Route path="/employees/new" element={<PrivateRoute requiredRole="ADMIN" />} >
+            <Route index element={<EmployeeForm />} />
+          </Route>
+          <Route path="/employees/:id/edit" element={<PrivateRoute requiredRole="ADMIN" />} >
+            <Route index element={<EmployeeForm />} />
+          </Route>
 
           {/* Usuários */}
           <Route path="/users" element={<PrivateRoute requiredRole="ADMIN" />} >
