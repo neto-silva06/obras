@@ -5,12 +5,14 @@ import {
   HardHat,
   Package,
   Warehouse,
+  Users,
+  History,
   LogOut
 } from 'lucide-react';
-import { useAuth } from '../hooks/useAuth';
+import { useAuth } from '../hooks/useAuth.js';
 
 export function Sidebar() {
-  const { logout, user } = useAuth();
+  const { logout, user, isAdmin } = useAuth();
   const navigate = useNavigate();
 
   const navItems = [
@@ -18,7 +20,12 @@ export function Sidebar() {
     { to: '/works', icon: HardHat, label: 'Obras' },
     { to: '/materials', icon: Package, label: 'Materiais' },
     { to: '/warehouses', icon: Warehouse, label: 'Depósitos' },
+    { to: '/stock-history', icon: History, label: 'Histórico' },
   ];
+
+  if (isAdmin) {
+    navItems.push({ to: '/users', icon: Users, label: 'Usuários' });
+  }
 
   const handleLogout = () => {
     logout();
@@ -34,7 +41,7 @@ export function Sidebar() {
         </h1>
       </div>
 
-      <nav className="flex-1 p-4 space-y-2 mt-4">
+      <nav className="flex-1 p-4 space-y-2 mt-4 overflow-y-auto">
         {navItems.map((item) => (
           <NavLink
             key={item.to}
@@ -60,7 +67,7 @@ export function Sidebar() {
           </div>
           <div className="flex-1 overflow-hidden">
             <p className="text-sm font-medium truncate">{user?.name || 'Usuário'}</p>
-            <p className="text-xs text-secondary-500 truncate">{user?.email}</p>
+            <p className="text-xs text-secondary-500 truncate">{user?.role}</p>
           </div>
         </div>
         <button

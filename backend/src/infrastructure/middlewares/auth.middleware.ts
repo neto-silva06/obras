@@ -1,11 +1,14 @@
 import type { Request, Response, NextFunction } from "express";
 import jwt from "jsonwebtoken";
+import { PrismaUserRepository } from "../repositories/PrismaUserRepository.js";
 
 interface AuthRequest extends Request {
-  user?: { id: string };
+  user?: { id: string; role: string; name: string; email: string };
 }
 
-export const authMiddleware = (req: AuthRequest, res: Response, next: NextFunction) => {
+const userRepository = new PrismaUserRepository();
+
+export const authMiddleware = async (req: AuthRequest, res: Response, next: NextFunction) => {
   const authHeader = req.headers.authorization;
 
   if (!authHeader) {
@@ -26,7 +29,20 @@ export const authMiddleware = (req: AuthRequest, res: Response, next: NextFuncti
   try {
     const secret = process.env.JWT_SECRET || 'secret';
     const decoded = jwt.verify(token as string, secret) as unknown as { id: string };
-    req.user = { id: decoded.id };
+
+    const user = await userRepository.findById(decoded.id);
+
+    if (!user) {
+      return res.status(401).json({ error: "User not found" });
+    }
+
+    req.user = {
+      id: user.id,
+      role: user.role,
+      name: user.name,
+      email: user.email
+    };
+
     next();
   } catch (error) {
     return res.status(401).json({ error: "Token is invalid or expired" });

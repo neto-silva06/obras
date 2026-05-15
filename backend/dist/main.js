@@ -10,6 +10,8 @@ import { workRouter } from "./interface/routes/work.routes.js";
 import { warehouseRouter } from "./interface/routes/warehouse.routes.js";
 import { materialRouter } from "./interface/routes/material.routes.js";
 import { stockRouter } from "./interface/routes/stock.routes.js";
+import { userRoutes } from "./interface/routes/user.routes.js";
+import { stockMovementRoutes } from "./interface/routes/stock-movement.routes.js";
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 const app = express();
@@ -21,6 +23,8 @@ app.use("/api/works", workRouter);
 app.use("/api/warehouses", warehouseRouter);
 app.use("/api/materials", materialRouter);
 app.use("/api/stocks", stockRouter);
+app.use("/api/users", userRoutes);
+app.use("/api/stock-movements", stockMovementRoutes);
 app.get('/api/ping', (req, res) => {
     res.send('pong');
 });

@@ -22,7 +22,8 @@ export function StockMovement() {
     warehouseId: '',
     materialId: '',
     quantity: 0,
-    operation: 'add' as 'add' | 'remove' | 'set'
+    operation: 'add' as 'add' | 'remove' | 'set',
+    description: ''
   });
 
   useEffect(() => {
@@ -149,6 +150,13 @@ export function StockMovement() {
               </label>
             </div>
           </div>
+
+          <Input
+            label="Observação (Opcional)"
+            placeholder="Ex: Nota fiscal 123, Devolução de obra..."
+            value={formData.description}
+            onChange={(e) => setFormData({ ...formData, description: e.target.value })}
+          />
 
           <div className="flex justify-end pt-4 border-t border-secondary-100">
             <Button type="submit" isLoading={submitting} className="w-full sm:w-auto">

@@ -27,25 +27,38 @@ export class UpdateStockUseCase {
 }
 export class AdjustStockUseCase {
     stockRepository;
-    constructor(stockRepository) {
+    stockMovementRepository;
+    constructor(stockRepository, stockMovementRepository) {
         this.stockRepository = stockRepository;
+        this.stockMovementRepository = stockMovementRepository;
     }
-    async execute(warehouseId, materialId, quantity, operation) {
+    async execute(params) {
+        const { warehouseId, materialId, quantity, operation, userId, description } = params;
+        let newQuantity = 0;
+        const currentStock = await this.stockRepository.findByWarehouseAndMaterial(warehouseId, materialId);
+        const currentQty = currentStock?.quantity || 0;
         if (operation === 'add') {
-            const stock = await this.stockRepository.findByWarehouseAndMaterial(warehouseId, materialId);
-            const currentQty = stock?.quantity || 0;
-            return await this.stockRepository.upsertStock(warehouseId, materialId, currentQty + quantity);
+            newQuantity = currentQty + quantity;
         }
         else if (operation === 'remove') {
-            const stock = await this.stockRepository.findByWarehouseAndMaterial(warehouseId, materialId);
-            const currentQty = stock?.quantity || 0;
             if (currentQty < quantity)
                 throw new Error("Insufficient stock balance");
-            return await this.stockRepository.upsertStock(warehouseId, materialId, currentQty - quantity);
+            newQuantity = currentQty - quantity;
         }
         else {
-            return await this.stockRepository.upsertStock(warehouseId, materialId, quantity);
+            newQuantity = quantity;
         }
+        const updatedStock = await this.stockRepository.upsertStock(warehouseId, materialId, newQuantity);
+        // Record the movement
+        await this.stockMovementRepository.create({
+            type: operation,
+            quantity,
+            description: description || null,
+            materialId,
+            warehouseId,
+            userId
+        });
+        return updatedStock;
     }
 }
 //# sourceMappingURL=StockUseCases.js.map

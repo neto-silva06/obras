@@ -5,10 +5,12 @@ import { DataTable } from '../../components/common/DataTable.js';
 import { Button } from '../../components/ui/Button.js';
 import workApi from '../../services/works.api.js';
 import type { Work } from '../../services/works.service.js';
+import { useAuth } from '../../hooks/useAuth.js';
 import toast from 'react-hot-toast';
 
 export function WorksList() {
   const navigate = useNavigate();
+  const { isAdmin } = useAuth();
   const [works, setWorks] = useState<Work[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
@@ -85,22 +87,27 @@ export function WorksList() {
       header: 'Ações',
       accessor: (work: Work) => (
         <div className="flex gap-2">
-          <Button
-            variant="outline"
-            onClick={() => navigate(`/works/${work.id}/edit`)}
-            className="p-2 h-auto"
-            title="Editar"
-          >
-            <Pencil size={14} />
-          </Button>
-          <Button
-            variant="outline"
-            onClick={() => handleDelete(work.id)}
-            className="p-2 h-auto text-red-600 hover:bg-red-50 hover:text-red-700 border-secondary-200"
-            title="Excluir"
-          >
-            <Trash2 size={14} />
-          </Button>
+          {isAdmin && (
+            <>
+              <Button
+                variant="outline"
+                onClick={() => navigate(`/works/${work.id}/edit`)}
+                className="p-2 h-auto"
+                title="Editar"
+              >
+                <Pencil size={14} />
+              </Button>
+              <Button
+                variant="outline"
+                onClick={() => handleDelete(work.id)}
+                className="p-2 h-auto text-red-600 hover:bg-red-50 hover:text-red-700 border-secondary-200"
+                title="Excluir"
+              >
+                <Trash2 size={14} />
+              </Button>
+            </>
+          )}
+          {!isAdmin && <span className="text-xs text-secondary-400 italic">Somente Leitura</span>}
         </div>
       )
     },
@@ -117,9 +124,11 @@ export function WorksList() {
           <Button variant="outline" onClick={() => navigate('/dashboard')}>
             <LayoutDashboard size={18} className="mr-2" /> Dashboard
           </Button>
-          <Button onClick={() => navigate('/works/new')}>
-            <Plus size={18} className="mr-2" /> Nova Obra
-          </Button>
+          {isAdmin && (
+            <Button onClick={() => navigate('/works/new')}>
+              <Plus size={18} className="mr-2" /> Nova Obra
+            </Button>
+          )}
         </div>
       </div>
 

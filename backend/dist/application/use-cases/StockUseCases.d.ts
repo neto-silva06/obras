@@ -1,4 +1,5 @@
 import type { StockRepository } from "../../domain/repositories/StockRepository.js";
+import type { StockMovementRepository } from "../../domain/repositories/StockMovementRepository.js";
 import type { Stock } from "../../domain/entities/Stock.js";
 export declare class GetStockByWarehouseUseCase {
     private stockRepository;
@@ -17,7 +18,15 @@ export declare class UpdateStockUseCase {
 }
 export declare class AdjustStockUseCase {
     private stockRepository;
-    constructor(stockRepository: StockRepository);
-    execute(warehouseId: string, materialId: string, quantity: number, operation: 'add' | 'remove' | 'set'): Promise<Stock>;
+    private stockMovementRepository;
+    constructor(stockRepository: StockRepository, stockMovementRepository: StockMovementRepository);
+    execute(params: {
+        warehouseId: string;
+        materialId: string;
+        quantity: number;
+        operation: 'add' | 'remove' | 'set';
+        userId: string;
+        description?: string;
+    }): Promise<Stock>;
 }
 //# sourceMappingURL=StockUseCases.d.ts.map
