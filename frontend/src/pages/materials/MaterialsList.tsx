@@ -5,10 +5,12 @@ import { DataTable } from '../../components/common/DataTable.js';
 import { Button } from '../../components/ui/Button.js';
 import materialApi from '../../services/materials.api.js';
 import type { Material } from '../../services/materials.service.js';
+import { useAuth } from '../../hooks/useAuth.js';
 import toast from 'react-hot-toast';
 
 export function MaterialsList() {
   const navigate = useNavigate();
+  const { isAdmin } = useAuth();
   const [materials, setMaterials] = useState<Material[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
@@ -79,22 +81,26 @@ export function MaterialsList() {
           >
             <Package size={14} />
           </Button>
-          <Button
-            variant="outline"
-            onClick={() => navigate(`/materials/${material.id}/edit`)}
-            className="p-2 h-auto border-secondary-200"
-            title="Editar"
-          >
-            <Pencil size={14} />
-          </Button>
-          <Button
-            variant="outline"
-            onClick={() => handleDelete(material.id)}
-            className="p-2 h-auto text-red-600 hover:bg-red-50 hover:text-red-700 border-secondary-200"
-            title="Excluir"
-          >
-            <Trash2 size={14} />
-          </Button>
+          {isAdmin && (
+            <>
+              <Button
+                variant="outline"
+                onClick={() => navigate(`/materials/${material.id}/edit`)}
+                className="p-2 h-auto border-secondary-200"
+                title="Editar"
+              >
+                <Pencil size={14} />
+              </Button>
+              <Button
+                variant="outline"
+                onClick={() => handleDelete(material.id)}
+                className="p-2 h-auto text-red-600 hover:bg-red-50 hover:text-red-700 border-secondary-200"
+                title="Excluir"
+              >
+                <Trash2 size={14} />
+              </Button>
+            </>
+          )}
         </div>
       )
     },
@@ -111,9 +117,11 @@ export function MaterialsList() {
           <Button variant="outline" onClick={() => navigate('/dashboard')}>
             <LayoutDashboard size={18} className="mr-2" /> Dashboard
           </Button>
-          <Button onClick={() => navigate('/materials/new')}>
-            <Plus size={18} className="mr-2" /> Novo Material
-          </Button>
+          {isAdmin && (
+            <Button onClick={() => navigate('/materials/new')}>
+              <Plus size={18} className="mr-2" /> Novo Material
+            </Button>
+          )}
         </div>
       </div>
 

@@ -1,10 +1,10 @@
 import React, { useState } from 'react';
-import { useNavigate, Link } from 'react-router-dom';
-import { useAuth } from '../hooks/useAuth';
-import { authService } from '../api/auth.service';
-import { Button } from '../components/ui/Button';
-import { Input } from '../components/ui/Input';
-import { Card } from '../components/ui/Card';
+import { useNavigate } from 'react-router-dom';
+import { useAuth } from '../hooks/useAuth.js';
+import { authService } from '../api/auth.service.js';
+import { Button } from '../components/ui/Button.js';
+import { Input } from '../components/ui/Input.js';
+import { Card } from '../components/ui/Card.js';
 import { HardHat } from 'lucide-react';
 import toast from 'react-hot-toast';
 
@@ -69,14 +69,6 @@ const LoginPage = () => {
               autoComplete="current-password"
             />
 
-            <div className="flex items-center justify-between">
-              <div className="text-sm">
-                <a href="#" className="font-medium text-primary-600 hover:text-primary-500">
-                  Esqueceu sua senha?
-                </a>
-              </div>
-            </div>
-
             <Button
               type="submit"
               className="w-full"
@@ -86,23 +78,10 @@ const LoginPage = () => {
             </Button>
           </form>
 
-          <div className="mt-6">
-            <div className="relative">
-              <div className="absolute inset-0 flex items-center">
-                <div className="w-full border-t border-secondary-300" />
-              </div>
-              <div className="relative flex justify-center text-sm">
-                <span className="px-2 bg-white text-secondary-500">Ainda não tem conta?</span>
-              </div>
-            </div>
-
-            <div className="mt-6">
-              <Link to="/register">
-                <Button variant="outline" className="w-full">
-                  Criar nova conta
-                </Button>
-              </Link>
-            </div>
+          <div className="mt-6 text-center">
+            <p className="text-sm text-secondary-500 italic">
+              Sistema de acesso restrito a usuários autorizados.
+            </p>
           </div>
         </Card>
       </div>

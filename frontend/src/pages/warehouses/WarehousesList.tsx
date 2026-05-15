@@ -5,11 +5,13 @@ import { DataTable } from '../../components/common/DataTable.js';
 import { Button } from '../../components/ui/Button.js';
 import warehouseApi from '../../services/warehouses.api.js';
 import type { Warehouse as WarehouseType } from '../../services/warehouses.service.js';
+import { useAuth } from '../../hooks/useAuth.js';
 import toast from 'react-hot-toast';
 
 export function WarehousesList() {
   const { workId } = useParams();
   const navigate = useNavigate();
+  const { isAdmin } = useAuth();
   const [warehouses, setWarehouses] = useState<WarehouseType[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
@@ -78,22 +80,26 @@ export function WarehousesList() {
           >
             <Package size={14} />
           </Button>
-          <Button
-            variant="outline"
-            onClick={() => navigate(`/warehouses/${w.id}/edit`)}
-            className="p-2 h-auto border-secondary-200"
-            title="Editar"
-          >
-            <Pencil size={14} />
-          </Button>
-          <Button
-            variant="outline"
-            onClick={() => handleDelete(w.id)}
-            className="p-2 h-auto text-red-600 hover:bg-red-50 hover:text-red-700 border-secondary-200"
-            title="Excluir"
-          >
-            <Trash2 size={14} />
-          </Button>
+          {isAdmin && (
+            <>
+              <Button
+                variant="outline"
+                onClick={() => navigate(`/warehouses/${w.id}/edit`)}
+                className="p-2 h-auto border-secondary-200"
+                title="Editar"
+              >
+                <Pencil size={14} />
+              </Button>
+              <Button
+                variant="outline"
+                onClick={() => handleDelete(w.id)}
+                className="p-2 h-auto text-red-600 hover:bg-red-50 hover:text-red-700 border-secondary-200"
+                title="Excluir"
+              >
+                <Trash2 size={14} />
+              </Button>
+            </>
+          )}
         </div>
       )
     },
@@ -116,12 +122,14 @@ export function WarehousesList() {
           </div>
         </div>
         <div className="flex gap-2">
-          <Button variant="secondary" onClick={() => navigate('/dashboard')}>
+          <Button variant="outline" onClick={() => navigate('/dashboard')}>
             <LayoutDashboard size={18} className="mr-2" /> Dashboard
           </Button>
-          <Button onClick={() => navigate(workId ? `/warehouses/new?workId=${workId}` : '/warehouses/new')}>
-            <Plus size={18} className="mr-2" /> Novo Depósito
-          </Button>
+          {isAdmin && (
+            <Button onClick={() => navigate(workId ? `/warehouses/new?workId=${workId}` : '/warehouses/new')}>
+              <Plus size={18} className="mr-2" /> Novo Depósito
+            </Button>
+          )}
         </div>
       </div>
 

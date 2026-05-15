@@ -2,11 +2,12 @@ import React, { useEffect, useState } from 'react';
 import api from '../services/api.js';
 import { Link } from 'react-router-dom';
 import { Card } from '../components/ui/Card.js';
-import { Button } from '../components/ui/Button.js';
 import { Spinner } from '../components/ui/Spinner.js';
-import { HardHat, Package, Warehouse, PlusCircle, ArrowRight, RefreshCcw } from 'lucide-react';
+import { useAuth } from '../hooks/useAuth.js';
+import { HardHat, Package, Warehouse, PlusCircle, ArrowRight, RefreshCcw, History, Users } from 'lucide-react';
 
 export function Dashboard() {
+  const { isAdmin } = useAuth();
   const [metrics, setMetrics] = useState({
     works: 0,
     materials: 0,
@@ -99,39 +100,61 @@ export function Dashboard() {
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
         <Card title="Ações Rápidas">
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            <Link to="/works/new">
-              <div className="p-4 border border-secondary-100 rounded-lg hover:bg-primary-50 hover:border-primary-200 transition-all group flex items-center gap-3">
-                <PlusCircle className="text-primary-600" size={24} />
-                <div>
-                  <p className="font-semibold text-secondary-900">Nova Obra</p>
-                  <p className="text-xs text-secondary-500">Cadastrar novo empreendimento</p>
-                </div>
-              </div>
-            </Link>
-            <Link to="/materials/new">
-              <div className="p-4 border border-secondary-100 rounded-lg hover:bg-orange-50 hover:border-orange-200 transition-all group flex items-center gap-3">
-                <PlusCircle className="text-orange-600" size={24} />
-                <div>
-                  <p className="font-semibold text-secondary-900">Novo Material</p>
-                  <p className="text-xs text-secondary-500">Adicionar item ao catálogo</p>
-                </div>
-              </div>
-            </Link>
-            <Link to="/warehouses/new">
-              <div className="p-4 border border-secondary-100 rounded-lg hover:bg-emerald-50 hover:border-emerald-200 transition-all group flex items-center gap-3">
-                <PlusCircle className="text-emerald-600" size={24} />
-                <div>
-                  <p className="font-semibold text-secondary-900">Novo Depósito</p>
-                  <p className="text-xs text-secondary-500">Vincular estoque a uma obra</p>
-                </div>
-              </div>
-            </Link>
+            {isAdmin && (
+              <>
+                <Link to="/works/new">
+                  <div className="p-4 border border-secondary-100 rounded-lg hover:bg-primary-50 hover:border-primary-200 transition-all group flex items-center gap-3">
+                    <PlusCircle className="text-primary-600" size={24} />
+                    <div>
+                      <p className="font-semibold text-secondary-900">Nova Obra</p>
+                      <p className="text-xs text-secondary-500">Cadastrar novo empreendimento</p>
+                    </div>
+                  </div>
+                </Link>
+                <Link to="/materials/new">
+                  <div className="p-4 border border-secondary-100 rounded-lg hover:bg-orange-50 hover:border-orange-200 transition-all group flex items-center gap-3">
+                    <PlusCircle className="text-orange-600" size={24} />
+                    <div>
+                      <p className="font-semibold text-secondary-900">Novo Material</p>
+                      <p className="text-xs text-secondary-500">Adicionar item ao catálogo</p>
+                    </div>
+                  </div>
+                </Link>
+                <Link to="/warehouses/new">
+                  <div className="p-4 border border-secondary-100 rounded-lg hover:bg-emerald-50 hover:border-emerald-200 transition-all group flex items-center gap-3">
+                    <PlusCircle className="text-emerald-600" size={24} />
+                    <div>
+                      <p className="font-semibold text-secondary-900">Novo Depósito</p>
+                      <p className="text-xs text-secondary-500">Vincular estoque a uma obra</p>
+                    </div>
+                  </div>
+                </Link>
+                <Link to="/users">
+                  <div className="p-4 border border-secondary-100 rounded-lg hover:bg-slate-50 hover:border-slate-200 transition-all group flex items-center gap-3">
+                    <Users className="text-slate-600" size={24} />
+                    <div>
+                      <p className="font-semibold text-secondary-900">Gerenciar Usuários</p>
+                      <p className="text-xs text-secondary-500">Listar e cadastrar acessos</p>
+                    </div>
+                  </div>
+                </Link>
+              </>
+            )}
             <Link to="/stock-movement">
               <div className="p-4 border border-secondary-100 rounded-lg hover:bg-indigo-50 hover:border-indigo-200 transition-all group flex items-center gap-3">
                 <RefreshCcw className="text-indigo-600" size={24} />
                 <div>
                   <p className="font-semibold text-secondary-900">Movimentar Estoque</p>
                   <p className="text-xs text-secondary-500">Registrar entradas e saídas</p>
+                </div>
+              </div>
+            </Link>
+            <Link to="/stock-history">
+              <div className="p-4 border border-secondary-100 rounded-lg hover:bg-amber-50 hover:border-amber-200 transition-all group flex items-center gap-3">
+                <History className="text-amber-600" size={24} />
+                <div>
+                  <p className="font-semibold text-secondary-900">Histórico</p>
+                  <p className="text-xs text-secondary-500">Ver logs de movimentação</p>
                 </div>
               </div>
             </Link>

@@ -1,4 +1,5 @@
 import type { StockRepository } from "../../domain/repositories/StockRepository.js";
+import type { StockMovementRepository } from "../../domain/repositories/StockMovementRepository.js";
 import type { Stock } from "../../domain/entities/Stock.js";
 
 export class GetStockByWarehouseUseCase {
@@ -23,19 +24,46 @@ export class UpdateStockUseCase {
 }
 
 export class AdjustStockUseCase {
-  constructor(private stockRepository: StockRepository) {}
-  async execute(warehouseId: string, materialId: string, quantity: number, operation: 'add' | 'remove' | 'set') {
+  constructor(
+    private stockRepository: StockRepository,
+    private stockMovementRepository: StockMovementRepository
+  ) {}
+
+  async execute(params: {
+    warehouseId: string,
+    materialId: string,
+    quantity: number,
+    operation: 'add' | 'remove' | 'set',
+    userId: string,
+    description?: string
+  }) {
+    const { warehouseId, materialId, quantity, operation, userId, description } = params;
+    let newQuantity = 0;
+
+    const currentStock = await this.stockRepository.findByWarehouseAndMaterial(warehouseId, materialId);
+    const currentQty = currentStock?.quantity || 0;
+
     if (operation === 'add') {
-      const stock = await this.stockRepository.findByWarehouseAndMaterial(warehouseId, materialId);
-      const currentQty = stock?.quantity || 0;
-      return await this.stockRepository.upsertStock(warehouseId, materialId, currentQty + quantity);
+      newQuantity = currentQty + quantity;
     } else if (operation === 'remove') {
-      const stock = await this.stockRepository.findByWarehouseAndMaterial(warehouseId, materialId);
-      const currentQty = stock?.quantity || 0;
       if (currentQty < quantity) throw new Error("Insufficient stock balance");
-      return await this.stockRepository.upsertStock(warehouseId, materialId, currentQty - quantity);
+      newQuantity = currentQty - quantity;
     } else {
-      return await this.stockRepository.upsertStock(warehouseId, materialId, quantity);
+      newQuantity = quantity;
     }
+
+    const updatedStock = await this.stockRepository.upsertStock(warehouseId, materialId, newQuantity);
+
+    // Record the movement
+    await this.stockMovementRepository.create({
+      type: operation,
+      quantity,
+      description: description || null,
+      materialId,
+      warehouseId,
+      userId
+    });
+
+    return updatedStock;
   }
 }

@@ -1,10 +1,14 @@
 import React from 'react';
 import { Navigate, Outlet } from 'react-router-dom';
-import { useAuth } from '../hooks/useAuth';
-import { Spinner } from '../components/ui/Spinner';
+import { useAuth } from '../hooks/useAuth.js';
+import { Spinner } from '../components/ui/Spinner.js';
 
-const PrivateRoute = () => {
-  const { isAuthenticated, loading } = useAuth();
+interface PrivateRouteProps {
+  requiredRole?: 'ADMIN' | 'USER';
+}
+
+const PrivateRoute = ({ requiredRole }: PrivateRouteProps) => {
+  const { isAuthenticated, loading, user } = useAuth();
 
   if (loading) {
     return (
@@ -14,7 +18,15 @@ const PrivateRoute = () => {
     );
   }
 
-  return isAuthenticated ? <Outlet /> : <Navigate to="/login" replace />;
+  if (!isAuthenticated) {
+    return <Navigate to="/login" replace />;
+  }
+
+  if (requiredRole && user?.role !== requiredRole && user?.role !== 'ADMIN') {
+    return <Navigate to="/dashboard" replace />;
+  }
+
+  return <Outlet />;
 };
 
 export default PrivateRoute;
