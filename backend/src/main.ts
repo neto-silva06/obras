@@ -12,6 +12,8 @@ import { materialRouter } from "./interface/routes/material.routes.js";
 import { stockRouter } from "./interface/routes/stock.routes.js";
 import { userRoutes } from "./interface/routes/user.routes.js";
 import { stockMovementRoutes } from "./interface/routes/stock-movement.routes.js";
+import { employeeRouter } from "./interface/routes/employee.routes.js";
+import { workDiaryRouter } from "./interface/routes/work-diary.routes.js";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -28,6 +30,8 @@ app.use("/api/materials", materialRouter);
 app.use("/api/stocks", stockRouter);
 app.use("/api/users", userRoutes);
 app.use("/api/stock-movements", stockMovementRoutes);
+app.use("/api/employees", employeeRouter);
+app.use("/api/work-diaries", workDiaryRouter);
 
 app.get('/api/ping', (req, res) => {
   res.send('pong');

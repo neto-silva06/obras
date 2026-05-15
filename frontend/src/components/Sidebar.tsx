@@ -7,7 +7,8 @@ import {
   Warehouse,
   Users,
   History,
-  LogOut
+  LogOut,
+  UserCheck
 } from 'lucide-react';
 import { useAuth } from '../hooks/useAuth.js';
 
@@ -20,6 +21,7 @@ export function Sidebar() {
     { to: '/works', icon: HardHat, label: 'Obras' },
     { to: '/materials', icon: Package, label: 'Materiais' },
     { to: '/warehouses', icon: Warehouse, label: 'Depósitos' },
+    { to: '/employees', icon: UserCheck, label: 'Funcionários' },
     { to: '/stock-history', icon: History, label: 'Histórico' },
   ];
 
@@ -52,7 +54,7 @@ export function Sidebar() {
                 ? 'bg-primary-600 text-white'
                 : 'text-secondary-400 hover:bg-secondary-800 hover:text-white'
               }
-            `}
+            ` }
           >
             <item.icon size={20} />
             <span className="font-medium">{item.label}</span>

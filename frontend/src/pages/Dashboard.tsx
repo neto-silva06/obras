@@ -1,185 +1,154 @@
-import React, { useEffect, useState } from 'react';
-import api from '../services/api.js';
-import { Link } from 'react-router-dom';
+import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
+import {
+  HardHat,
+  Package,
+  Warehouse,
+  ArrowRightLeft,
+  Users,
+  TrendingUp,
+  Clock,
+  Plus,
+  UserCheck
+} from 'lucide-react';
 import { Card } from '../components/ui/Card.js';
+import { Button } from '../components/ui/Button.js';
 import { Spinner } from '../components/ui/Spinner.js';
+import workApi from '../services/works.api.js';
+import materialApi from '../services/materials.api.js';
+import warehouseApi from '../services/warehouses.api.js';
 import { useAuth } from '../hooks/useAuth.js';
-import { HardHat, Package, Warehouse, PlusCircle, ArrowRight, RefreshCcw, History, Users } from 'lucide-react';
+import toast from 'react-hot-toast';
 
 export function Dashboard() {
-  const { isAdmin } = useAuth();
-  const [metrics, setMetrics] = useState({
+  const navigate = useNavigate();
+  const { user } = useAuth();
+  const [stats, setStats] = useState({
     works: 0,
     materials: 0,
-    warehouses: 0
+    warehouses: 0,
+    movements: 0
   });
-  const [loading, setLoading] = useState(true);
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    async function loadMetrics() {
+    const fetchStats = async () => {
       try {
-        const [worksRes, materialsRes, warehousesRes] = await Promise.all([
-          api.get('/works'),
-          api.get('/materials'),
-          api.get('/warehouses')
+        const [works, materials, warehouses] = await Promise.all([
+          workApi.getAll(),
+          materialApi.getAll(),
+          warehouseApi.getAll()
         ]);
-        setMetrics({
-          works: worksRes.data.length,
-          materials: materialsRes.data.length,
-          warehouses: warehousesRes.data.length
+
+        setStats({
+          works: works.length,
+          materials: materials.length,
+          warehouses: warehouses.length,
+          movements: 0 // Mock por enquanto
         });
       } catch (error) {
-        console.error('Erro ao carregar métricas', error);
+        toast.error('Erro ao carregar estatísticas do dashboard');
       } finally {
-        setLoading(false);
+        setIsLoading(false);
       }
-    }
-    loadMetrics();
+    };
+
+    fetchStats();
   }, []);
 
-  if (loading) return (
-    <div className="flex flex-col items-center justify-center h-[60vh]">
-      <Spinner />
-      <p className="mt-4 text-secondary-500 animate-pulse">Carregando indicadores...</p>
-    </div>
-  );
-
-  const stats = [
-    {
-      label: 'Total de Obras',
-      value: metrics.works,
-      icon: HardHat,
-      color: 'text-blue-600',
-      bg: 'bg-blue-50',
-      link: '/works'
-    },
-    {
-      label: 'Materiais no Catálogo',
-      value: metrics.materials,
-      icon: Package,
-      color: 'text-orange-600',
-      bg: 'bg-orange-50',
-      link: '/materials'
-    },
-    {
-      label: 'Depósitos Ativos',
-      value: metrics.warehouses,
-      icon: Warehouse,
-      color: 'text-emerald-600',
-      bg: 'bg-emerald-50',
-      link: '/warehouses'
-    },
+  const cards = [
+    { label: 'Obras Ativas', value: stats.works, icon: HardHat, color: 'text-blue-600', bg: 'bg-blue-100', to: '/works' },
+    { label: 'Materiais no Catálogo', value: stats.materials, icon: Package, color: 'text-orange-600', bg: 'bg-orange-100', to: '/materials' },
+    { label: 'Depósitos Cadastrados', value: stats.warehouses, icon: Warehouse, color: 'text-green-600', bg: 'bg-green-100', to: '/warehouses' },
+    { label: 'Funcionários Cadastrados', value: '-', icon: UserCheck, color: 'text-purple-600', bg: 'bg-purple-100', to: '/employees' },
   ];
+
+  const quickActions = [
+    { label: 'Nova Obra', icon: Plus, to: '/works/new', adminOnly: true },
+    { label: 'Novo Material', icon: Plus, to: '/materials/new', adminOnly: true },
+    { label: 'Movimentar Estoque', icon: ArrowRightLeft, to: '/stock-movement' },
+    { label: 'Diário de Obra', icon: Clock, to: '/works' },
+    { label: 'Relatórios de Custos', icon: TrendingUp, to: '/works' },
+    { label: 'Gestão de Usuários', icon: Users, to: '/users', adminOnly: true },
+  ];
+
+  if (isLoading) {
+    return (
+      <div className="flex items-center justify-center h-[60vh]">
+        <Spinner />
+      </div>
+    );
+  }
 
   return (
     <div className="space-y-8">
-      <header>
-        <h1 className="text-3xl font-bold text-secondary-900">Painel de Controle</h1>
-        <p className="text-secondary-500 mt-2">Visão geral do seu sistema de gerenciamento de obras.</p>
-      </header>
+      <div>
+        <h1 className="text-2xl font-bold text-secondary-900">Bem-vindo, {user?.name}!</h1>
+        <p className="text-secondary-500">Aqui está um resumo do que está acontecendo no sistema.</p>
+      </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-        {stats.map((stat) => (
-          <Card key={stat.label} className="hover:shadow-md transition-shadow">
-            <div className="flex items-center gap-4">
-              <div className={`p-3 rounded-xl ${stat.bg} ${stat.color}`}>
-                <stat.icon size={28} />
+      {/* Stats Grid */}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+        {cards.map((card) => (
+          <div
+            key={card.label}
+            className="cursor-pointer"
+            onClick={() => navigate(card.to)}
+          >
+            <Card className="p-6 hover:shadow-md transition-shadow">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-sm font-medium text-secondary-500 uppercase tracking-wider">{card.label}</p>
+                  <p className="text-3xl font-bold text-secondary-900 mt-1">{card.value}</p>
+                </div>
+                <div className={`p-3 rounded-lg ${card.bg} ${card.color}`}>
+                  <card.icon size={24} />
+                </div>
               </div>
-              <div className="flex-1">
-                <p className="text-sm font-medium text-secondary-500">{stat.label}</p>
-                <p className="text-3xl font-bold text-secondary-900">{stat.value}</p>
-              </div>
-              <Link to={stat.link} className="text-secondary-400 hover:text-primary-600 transition-colors">
-                <ArrowRight size={20} />
-              </Link>
-            </div>
-          </Card>
+            </Card>
+          </div>
         ))}
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-        <Card title="Ações Rápidas">
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            {isAdmin && (
-              <>
-                <Link to="/works/new">
-                  <div className="p-4 border border-secondary-100 rounded-lg hover:bg-primary-50 hover:border-primary-200 transition-all group flex items-center gap-3">
-                    <PlusCircle className="text-primary-600" size={24} />
-                    <div>
-                      <p className="font-semibold text-secondary-900">Nova Obra</p>
-                      <p className="text-xs text-secondary-500">Cadastrar novo empreendimento</p>
-                    </div>
-                  </div>
-                </Link>
-                <Link to="/materials/new">
-                  <div className="p-4 border border-secondary-100 rounded-lg hover:bg-orange-50 hover:border-orange-200 transition-all group flex items-center gap-3">
-                    <PlusCircle className="text-orange-600" size={24} />
-                    <div>
-                      <p className="font-semibold text-secondary-900">Novo Material</p>
-                      <p className="text-xs text-secondary-500">Adicionar item ao catálogo</p>
-                    </div>
-                  </div>
-                </Link>
-                <Link to="/warehouses/new">
-                  <div className="p-4 border border-secondary-100 rounded-lg hover:bg-emerald-50 hover:border-emerald-200 transition-all group flex items-center gap-3">
-                    <PlusCircle className="text-emerald-600" size={24} />
-                    <div>
-                      <p className="font-semibold text-secondary-900">Novo Depósito</p>
-                      <p className="text-xs text-secondary-500">Vincular estoque a uma obra</p>
-                    </div>
-                  </div>
-                </Link>
-                <Link to="/users">
-                  <div className="p-4 border border-secondary-100 rounded-lg hover:bg-slate-50 hover:border-slate-200 transition-all group flex items-center gap-3">
-                    <Users className="text-slate-600" size={24} />
-                    <div>
-                      <p className="font-semibold text-secondary-900">Gerenciar Usuários</p>
-                      <p className="text-xs text-secondary-500">Listar e cadastrar acessos</p>
-                    </div>
-                  </div>
-                </Link>
-              </>
-            )}
-            <Link to="/stock-movement">
-              <div className="p-4 border border-secondary-100 rounded-lg hover:bg-indigo-50 hover:border-indigo-200 transition-all group flex items-center gap-3">
-                <RefreshCcw className="text-indigo-600" size={24} />
-                <div>
-                  <p className="font-semibold text-secondary-900">Movimentar Estoque</p>
-                  <p className="text-xs text-secondary-500">Registrar entradas e saídas</p>
-                </div>
-              </div>
-            </Link>
-            <Link to="/stock-history">
-              <div className="p-4 border border-secondary-100 rounded-lg hover:bg-amber-50 hover:border-amber-200 transition-all group flex items-center gap-3">
-                <History className="text-amber-600" size={24} />
-                <div>
-                  <p className="font-semibold text-secondary-900">Histórico</p>
-                  <p className="text-xs text-secondary-500">Ver logs de movimentação</p>
-                </div>
-              </div>
-            </Link>
-          </div>
-        </Card>
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+        {/* Ações Rápidas */}
+        <div className="lg:col-span-2 space-y-4">
+          <h2 className="text-lg font-bold text-secondary-900">Ações Rápidas</h2>
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
+            {quickActions.map((action) => {
+              if (action.adminOnly && user?.role !== 'ADMIN') return null;
 
-        <Card title="Resumo do Sistema">
-          <div className="space-y-4">
-            <div className="flex items-center justify-between py-2 border-b border-secondary-50">
-              <span className="text-secondary-600">Status da API</span>
-              <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
-                Operacional
-              </span>
-            </div>
-            <div className="flex items-center justify-between py-2 border-b border-secondary-50">
-              <span className="text-secondary-600">Última Atualização</span>
-              <span className="text-sm text-secondary-900 font-medium">{new Date().toLocaleDateString('pt-BR')}</span>
-            </div>
-            <div className="pt-4">
-              <p className="text-sm text-secondary-500 italic">
-                Utilize o menu lateral para navegar entre os módulos de gerenciamento.
-              </p>
-            </div>
+              return (
+                <Button
+                  key={action.label}
+                  variant="outline"
+                  className="h-24 flex flex-col items-center justify-center gap-2 border-secondary-200 hover:border-primary-500 hover:text-primary-600"
+                  onClick={() => navigate(action.to)}
+                >
+                  <action.icon size={24} />
+                  <span className="text-sm font-semibold">{action.label}</span>
+                </Button>
+              );
+            })}
           </div>
-        </Card>
+        </div>
+
+        {/* Informações Extras / Atalhos */}
+        <div className="space-y-4">
+          <h2 className="text-lg font-bold text-secondary-900">Suporte e Ajuda</h2>
+          <Card className="p-6 bg-primary-900 text-white border-none">
+            <h3 className="font-bold mb-2">Dica do Dia</h3>
+            <p className="text-sm text-primary-200 leading-relaxed">
+              Use o "Diário de Obra" para registrar diariamente a presença da equipe e os materiais gastos. Isso ajuda a manter o custo da obra sempre atualizado!
+            </p>
+            <Button
+              className="mt-4 w-full bg-white text-primary-900 hover:bg-primary-50"
+              onClick={() => navigate('/works')}
+            >
+              Começar agora
+            </Button>
+          </Card>
+        </div>
       </div>
     </div>
   );

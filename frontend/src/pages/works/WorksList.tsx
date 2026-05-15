@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Plus, Pencil, Trash2, HardHat, Search, LayoutDashboard } from 'lucide-react';
+import { Plus, Pencil, Trash2, HardHat, Search, LayoutDashboard, FileText } from 'lucide-react';
 import { DataTable } from '../../components/common/DataTable.js';
 import { Button } from '../../components/ui/Button.js';
 import workApi from '../../services/works.api.js';
@@ -87,12 +87,20 @@ export function WorksList() {
       header: 'Ações',
       accessor: (work: Work) => (
         <div className="flex gap-2">
+          <Button
+            variant="outline"
+            onClick={() => navigate(`/works/${work.id}/diary`)}
+            className="p-2 h-auto text-primary-600 border-secondary-200"
+            title="Diário de Obra / Custos"
+          >
+            <FileText size={14} />
+          </Button>
           {isAdmin && (
             <>
               <Button
                 variant="outline"
                 onClick={() => navigate(`/works/${work.id}/edit`)}
-                className="p-2 h-auto"
+                className="p-2 h-auto border-secondary-200"
                 title="Editar"
               >
                 <Pencil size={14} />
