@@ -10,7 +10,7 @@ export class AuthController {
             return res.status(201).json({ user: userResponse });
         }
         catch (error) {
-            return res.status(400).json({ error: error.message });
+            return res.status(400).json({ message: error.message });
         }
     }
     async login(req, res) {
@@ -19,7 +19,7 @@ export class AuthController {
             return res.json({ user, token });
         }
         catch (error) {
-            return res.status(401).json({ error: error.message });
+            return res.status(401).json({ message: error.message });
         }
     }
 }
