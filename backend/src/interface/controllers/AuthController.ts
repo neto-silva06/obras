@@ -12,7 +12,7 @@ export class AuthController {
       const { password, ...userResponse } = user;
       return res.status(201).json({ user: userResponse });
     } catch (error: any) {
-      return res.status(400).json({ error: error.message });
+      return res.status(400).json({ message: error.message });
     }
   }
 
@@ -21,7 +21,7 @@ export class AuthController {
       const { user, token } = await new LoginUser(userRepository).execute(req.body);
       return res.json({ user, token });
     } catch (error: any) {
-      return res.status(401).json({ error: error.message });
+      return res.status(401).json({ message: error.message });
     }
   }
 }
