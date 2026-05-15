@@ -17,6 +17,11 @@ const __dirname = path.dirname(__filename);
 const app = express();
 app.use(cors());
 app.use(express.json());
+// Simple request logger middleware
+app.use((req, res, next) => {
+    console.log(`[${new Date().toISOString()}] ${req.method} ${req.path}`);
+    next();
+});
 // API Routes
 app.use("/api/auth", authRouter);
 app.use("/api/works", workRouter);
@@ -29,12 +34,10 @@ app.get('/api/ping', (req, res) => {
     res.send('pong');
 });
 // Serve static files from the frontend/dist directory
-// When running from backend/dist/main.js, we go up two levels to reach the root
 const frontendPath = path.join(__dirname, "../../frontend/dist");
 app.use(express.static(frontendPath));
 // Catch-all route to serve the frontend index.html for React Router
 app.get("*", (req, res, next) => {
-    // If the request is for an API route that wasn't matched, don't serve index.html
     if (req.path.startsWith('/api')) {
         return next();
     }

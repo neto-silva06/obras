@@ -20,7 +20,9 @@ api.interceptors.request.use(
 api.interceptors.response.use(
   (response) => response,
   (error) => {
-    if (error.response && error.response.status === 401) {
+    // Only redirect to login if the error is 401 AND it's NOT a login attempt
+    // This prevents the page from reloading when a user enters wrong credentials
+    if (error.response && error.response.status === 401 && !error.config.url?.includes('/auth/login')) {
       localStorage.removeItem('token');
       localStorage.removeItem('user');
       window.location.href = '/login';
