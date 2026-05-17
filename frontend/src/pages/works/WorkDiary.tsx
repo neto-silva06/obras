@@ -37,17 +37,24 @@ export function WorkDiary() {
   const fetchData = async () => {
     if (!workId) return;
     setIsLoading(true);
+
+    // Helper to fetch and ignore errors for offline resilience
+    const fetchSafe = async (apiCall: Promise<any>, setter: (data: any) => void) => {
+      try {
+        const data = await apiCall;
+        setter(data);
+      } catch (err) {
+        console.warn('Silent fetch error (likely offline/cached):', err);
+      }
+    };
+
     try {
-      const [workData, employeesData, materialsData, diaryData] = await Promise.all([
-        workApi.getById(workId),
-        employeeApi.getAll(),
-        materialApi.getAll(),
-        workDiaryApi.getDiary(workId, selectedDate)
+      await Promise.all([
+        fetchSafe(workApi.getById(workId), setWork),
+        fetchSafe(employeeApi.getAll(), setEmployees),
+        fetchSafe(materialApi.getAll(), setMaterials),
+        fetchSafe(workDiaryApi.getDiary(workId, selectedDate), setDiary)
       ]);
-      setWork(workData);
-      setEmployees(employeesData);
-      setMaterials(materialsData);
-      setDiary(diaryData);
     } catch (error) {
       toast.error('Erro ao carregar dados do diário');
     } finally {
@@ -60,33 +67,90 @@ export function WorkDiary() {
   }, [workId, selectedDate]);
 
   const handleAddLabor = async () => {
-    if (!diary || !selectedEmployee) return;
+    if (!diary || !selectedEmployee || !workId) return;
+
+    const employee = employees.find(e => e.id === selectedEmployee);
+    if (!employee) return;
+
+    // Optimistic UI update
+    const tempId = 'temp-' + Date.now();
+    const newEntry: LaborEntry = {
+      id: tempId,
+      workDiaryId: diary.id,
+      employeeId: employee.id,
+      cost: employee.dailyRate,
+      employee: employee
+    };
+
+    const previousDiary = { ...diary };
+    setDiary({
+      ...diary,
+      laborEntries: [...diary.laborEntries, newEntry]
+    });
+
     try {
       await workDiaryApi.addLabor(diary.id, selectedEmployee);
       toast.success('Funcionário registrado');
       setSelectedEmployee('');
-      const updatedDiary = await workDiaryApi.getDiary(workId!, selectedDate);
+      // Reload to get real IDs from server if online
+      const updatedDiary = await workDiaryApi.getDiary(workId, selectedDate);
       setDiary(updatedDiary);
     } catch (error) {
-      toast.error('Erro ao registrar funcionário');
+      // If error but it was saved offline (202 status in interceptor), we keep the optimistic state
+      const isOfflineSuccess = (error as any)?.status === 202;
+      if (!isOfflineSuccess) {
+          setDiary(previousDiary);
+          toast.error('Erro ao registrar funcionário');
+      } else {
+          setSelectedEmployee('');
+      }
     }
   };
 
   const handleRemoveLabor = async (id: string) => {
+    if (!diary) return;
+
+    const previousDiary = { ...diary };
+    setDiary({
+      ...diary,
+      laborEntries: diary.laborEntries.filter(e => e.id !== id)
+    });
+
     try {
       await workDiaryApi.removeLabor(id);
-      setDiary(prev => prev ? {
-        ...prev,
-        laborEntries: prev.laborEntries.filter(e => e.id !== id)
-      } : null);
       toast.success('Registro removido');
     } catch (error) {
-      toast.error('Erro ao remover registro');
+      const isOfflineSuccess = (error as any)?.status === 202;
+      if (!isOfflineSuccess) {
+          setDiary(previousDiary);
+          toast.error('Erro ao remover registro');
+      }
     }
   };
 
   const handleAddMaterial = async () => {
-    if (!diary || !selectedMaterial) return;
+    if (!diary || !selectedMaterial || !workId) return;
+
+    const material = materials.find(m => m.id === selectedMaterial);
+    if (!material) return;
+
+    // Optimistic UI update
+    const tempId = 'temp-' + Date.now();
+    const newUsage: MaterialUsage = {
+      id: tempId,
+      workDiaryId: diary.id,
+      materialId: material.id,
+      quantity: materialQty,
+      unitPrice: materialPrice,
+      material: material
+    };
+
+    const previousDiary = { ...diary };
+    setDiary({
+      ...diary,
+      materialUsages: [...diary.materialUsages, newUsage]
+    });
+
     try {
       await workDiaryApi.addMaterial({
         workDiaryId: diary.id,
@@ -98,28 +162,44 @@ export function WorkDiary() {
       setSelectedMaterial('');
       setMaterialQty(1);
       setMaterialPrice(0);
-      const updatedDiary = await workDiaryApi.getDiary(workId!, selectedDate);
+      const updatedDiary = await workDiaryApi.getDiary(workId, selectedDate);
       setDiary(updatedDiary);
     } catch (error) {
-      toast.error('Erro ao registrar material');
+      const isOfflineSuccess = (error as any)?.status === 202;
+      if (!isOfflineSuccess) {
+          setDiary(previousDiary);
+          toast.error('Erro ao registrar material');
+      } else {
+          setSelectedMaterial('');
+          setMaterialQty(1);
+          setMaterialPrice(0);
+      }
     }
   };
 
   const handleRemoveMaterial = async (id: string) => {
+    if (!diary) return;
+
+    const previousDiary = { ...diary };
+    setDiary({
+      ...diary,
+      materialUsages: diary.materialUsages.filter(m => m.id !== id)
+    });
+
     try {
       await workDiaryApi.removeMaterial(id);
-      setDiary(prev => prev ? {
-        ...prev,
-        materialUsages: prev.materialUsages.filter(m => m.id !== id)
-      } : null);
       toast.success('Registro removido');
     } catch (error) {
-      toast.error('Erro ao remover registro');
+      const isOfflineSuccess = (error as any)?.status === 202;
+      if (!isOfflineSuccess) {
+          setDiary(previousDiary);
+          toast.error('Erro ao remover registro');
+      }
     }
   };
 
   const changeDate = (days: number) => {
-    const d = new Date(selectedDate);
+    const d = new Date(selectedDate + 'T12:00:00');
     d.setDate(d.getDate() + days);
     setSelectedDate(d.toISOString().split('T')[0]);
   };

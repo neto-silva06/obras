@@ -57,6 +57,17 @@ export function WorkCostReport() {
     window.print();
   };
 
+  const formatDate = (dateStr: string) => {
+    try {
+      // Handles both ISO strings and YYYY-MM-DD
+      const date = new Date(dateStr + (dateStr.includes('T') ? '' : 'T12:00:00'));
+      if (isNaN(date.getTime())) return 'Data Inválida';
+      return date.toLocaleDateString('pt-BR');
+    } catch (e) {
+      return 'Data Inválida';
+    }
+  };
+
   if (isLoading && !work) return <div className="flex justify-center p-12"><Spinner /></div>;
 
   return (
@@ -150,7 +161,7 @@ export function WorkCostReport() {
                  return (
                    <tr key={d.id} className="hover:bg-secondary-50 transition-colors">
                      <td className="px-6 py-4 font-semibold text-secondary-900">
-                       {new Date(d.date + 'T12:00:00').toLocaleDateString('pt-BR')}
+                       {formatDate(d.date)}
                      </td>
                      <td className="px-6 py-4 text-sm text-secondary-600">
                        {d.laborEntries.length} funcionários
