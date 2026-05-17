@@ -7,6 +7,9 @@
     "build": "tsc && vite build"
   },
   "dependencies": {
+    "@capacitor/android": "^8.3.4",
+    "@capacitor/cli": "^8.3.4",
+    "@capacitor/core": "^8.3.4",
     "axios": "^1.16.0",
     "dexie": "^4.4.2",
     "esbuild": "^0.28.0",
