@@ -26,7 +26,7 @@ export async function syncOfflineData() {
         await db.syncQueue.update(op.id!, { status: 'syncing' });
 
         await api({
-          url: op.url,
+          url: op.url.replace("/api", ""),
           method: op.method,
           data: op.data,
           headers: {

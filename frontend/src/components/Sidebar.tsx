@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { NavLink, useNavigate } from 'react-router-dom';
 import {
   LayoutDashboard,
@@ -10,9 +10,14 @@ import {
   LogOut,
   UserCheck,
   Menu,
-  X
+  X,
+  RefreshCw,
+  CloudOff
 } from 'lucide-react';
 import { useAuth } from '../hooks/useAuth.js';
+import { db } from '../offline/db.js';
+import { syncOfflineData } from '../offline/sync.js';
+import toast from 'react-hot-toast';
 
 interface SidebarProps {
   isOpen?: boolean;
@@ -22,6 +27,32 @@ interface SidebarProps {
 export function Sidebar({ isOpen = true, onClose }: SidebarProps) {
   const { logout, user, isAdmin } = useAuth();
   const navigate = useNavigate();
+  const [pendingCount, setPendingCount] = useState(0);
+  const [isSyncing, setIsSyncing] = useState(false);
+
+  useEffect(() => {
+    const checkPending = async () => {
+      const count = await db.syncQueue
+        .where('status')
+        .equals('pending')
+        .count();
+      setPendingCount(count);
+    };
+
+    checkPending();
+    const interval = setInterval(checkPending, 5000);
+    return () => clearInterval(interval);
+  }, []);
+
+  const handleManualSync = async () => {
+    if (!navigator.onLine) {
+      toast.error('Sem conexão com a internet.');
+      return;
+    }
+    setIsSyncing(true);
+    await syncOfflineData();
+    setIsSyncing(false);
+  };
 
   const navItems = [
     { to: '/dashboard', icon: LayoutDashboard, label: 'Dashboard' },
@@ -89,6 +120,29 @@ export function Sidebar({ isOpen = true, onClose }: SidebarProps) {
             </NavLink>
           ))}
         </nav>
+
+        {pendingCount > 0 && (
+          <div className="mx-4 mb-4 p-3 bg-secondary-800 rounded-lg border border-secondary-700">
+            <div className="flex items-center justify-between mb-2">
+              <span className="text-xs font-semibold text-secondary-400 uppercase tracking-wider">Sincronização</span>
+              <span className="bg-primary-600 text-white text-[10px] px-1.5 py-0.5 rounded-full font-bold">
+                {pendingCount}
+              </span>
+            </div>
+            <button
+              onClick={handleManualSync}
+              disabled={isSyncing}
+              className={`w-full flex items-center justify-center gap-2 py-2 text-xs font-medium rounded-md transition-colors ${
+                isSyncing
+                  ? 'bg-secondary-700 text-secondary-500 cursor-not-allowed'
+                  : 'bg-primary-600/10 text-primary-400 hover:bg-primary-600/20'
+              }`}
+            >
+              <RefreshCw size={14} className={isSyncing ? 'animate-spin' : ''} />
+              {isSyncing ? 'Sincronizando...' : 'Sincronizar Agora'}
+            </button>
+          </div>
+        )}
 
         <div className="p-4 border-t border-secondary-800">
           <div className="flex items-center gap-3 px-4 py-3 mb-4">

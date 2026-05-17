@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import {
   Calendar, Users, Package, ArrowLeft, Plus, Trash2,
-  ChevronLeft, ChevronRight, HardHat, DollarSign, LayoutDashboard
+  ChevronLeft, ChevronRight, HardHat, DollarSign, LayoutDashboard, Clock
 } from 'lucide-react';
 import { Button } from '../../components/ui/Button.js';
 import { Card } from '../../components/ui/Card.js';
@@ -17,6 +17,7 @@ import type { Employee } from '../../services/employees.service.js';
 import type { Material } from '../../services/materials.service.js';
 import type { Work } from '../../services/works.service.js';
 import toast from 'react-hot-toast';
+import { db } from '../../offline/db.js';
 
 export function WorkDiary() {
   const { workId } = useParams();
@@ -47,7 +48,54 @@ export function WorkDiary() {
       setWork(workData);
       setEmployees(employeesData);
       setMaterials(materialsData);
-      setDiary(diaryData);
+
+      // Merge with pending operations from syncQueue
+      const pendingOps = await db.syncQueue
+        .where('status')
+        .equals('pending')
+        .toArray();
+
+      const enrichedDiary = { ...diaryData };
+
+      // Handle pending labor entries
+      pendingOps.forEach(op => {
+        if (op.url === '/api/work-diaries/labor' && op.method === 'POST') {
+          if (op.data.workDiaryId === diaryData.id) {
+            const employee = employeesData.find(e => e.id === op.data.employeeId);
+            if (employee && !enrichedDiary.laborEntries.some(le => le.employeeId === employee.id)) {
+              enrichedDiary.laborEntries.push({
+                id: `offline-${op.id}`,
+                workDiaryId: diaryData.id,
+                employeeId: employee.id,
+                employee: employee,
+                cost: employee.dailyRate,
+                createdAt: new Date(op.timestamp).toISOString(),
+                _isOffline: true
+              } as any);
+            }
+          }
+        }
+
+        if (op.url === '/api/work-diaries/material' && op.method === 'POST') {
+          if (op.data.workDiaryId === diaryData.id) {
+            const material = materialsData.find(m => m.id === op.data.materialId);
+            if (material) {
+              enrichedDiary.materialUsages.push({
+                id: `offline-${op.id}`,
+                workDiaryId: diaryData.id,
+                materialId: material.id,
+                material: material,
+                quantity: op.data.quantity,
+                unitPrice: op.data.unitPrice,
+                createdAt: new Date(op.timestamp).toISOString(),
+                _isOffline: true
+              } as any);
+            }
+          }
+        }
+      });
+
+      setDiary(enrichedDiary);
     } catch (error) {
       toast.error('Erro ao carregar dados do diário');
     } finally {
@@ -62,11 +110,31 @@ export function WorkDiary() {
   const handleAddLabor = async () => {
     if (!diary || !selectedEmployee) return;
     try {
-      await workDiaryApi.addLabor(diary.id, selectedEmployee);
-      toast.success('Funcionário registrado');
-      setSelectedEmployee('');
-      const updatedDiary = await workDiaryApi.getDiary(workId!, selectedDate);
-      setDiary(updatedDiary);
+      const response: any = await workDiaryApi.addLabor(diary.id, selectedEmployee);
+
+      if (response._isOffline) {
+        const employee = employees.find(e => e.id === selectedEmployee);
+        if (employee) {
+          const newEntry = {
+            id: response.id,
+            workDiaryId: diary.id,
+            employeeId: employee.id,
+            employee: employee,
+            cost: employee.dailyRate,
+            _isOffline: true
+          };
+          setDiary(prev => prev ? {
+            ...prev,
+            laborEntries: [...prev.laborEntries, newEntry as any]
+          } : null);
+        }
+        setSelectedEmployee('');
+      } else {
+        toast.success('Funcionário registrado');
+        setSelectedEmployee('');
+        const updatedDiary = await workDiaryApi.getDiary(workId!, selectedDate);
+        setDiary(updatedDiary);
+      }
     } catch (error) {
       toast.error('Erro ao registrar funcionário');
     }
@@ -74,7 +142,13 @@ export function WorkDiary() {
 
   const handleRemoveLabor = async (id: string) => {
     try {
-      await workDiaryApi.removeLabor(id);
+      if (id.startsWith('offline-')) {
+        const syncId = parseInt(id.replace('offline-', ''));
+        await db.syncQueue.delete(syncId);
+      } else {
+        await workDiaryApi.removeLabor(id);
+      }
+
       setDiary(prev => prev ? {
         ...prev,
         laborEntries: prev.laborEntries.filter(e => e.id !== id)
@@ -88,18 +162,43 @@ export function WorkDiary() {
   const handleAddMaterial = async () => {
     if (!diary || !selectedMaterial) return;
     try {
-      await workDiaryApi.addMaterial({
+      const usageData = {
         workDiaryId: diary.id,
         materialId: selectedMaterial,
         quantity: materialQty,
         unitPrice: materialPrice
-      });
-      toast.success('Material registrado');
-      setSelectedMaterial('');
-      setMaterialQty(1);
-      setMaterialPrice(0);
-      const updatedDiary = await workDiaryApi.getDiary(workId!, selectedDate);
-      setDiary(updatedDiary);
+      };
+
+      const response: any = await workDiaryApi.addMaterial(usageData);
+
+      if (response._isOffline) {
+        const material = materials.find(m => m.id === selectedMaterial);
+        if (material) {
+          const newUsage = {
+            id: response.id,
+            workDiaryId: diary.id,
+            materialId: material.id,
+            material: material,
+            quantity: materialQty,
+            unitPrice: materialPrice,
+            _isOffline: true
+          };
+          setDiary(prev => prev ? {
+            ...prev,
+            materialUsages: [...prev.materialUsages, newUsage as any]
+          } : null);
+        }
+        setSelectedMaterial('');
+        setMaterialQty(1);
+        setMaterialPrice(0);
+      } else {
+        toast.success('Material registrado');
+        setSelectedMaterial('');
+        setMaterialQty(1);
+        setMaterialPrice(0);
+        const updatedDiary = await workDiaryApi.getDiary(workId!, selectedDate);
+        setDiary(updatedDiary);
+      }
     } catch (error) {
       toast.error('Erro ao registrar material');
     }
@@ -107,7 +206,13 @@ export function WorkDiary() {
 
   const handleRemoveMaterial = async (id: string) => {
     try {
-      await workDiaryApi.removeMaterial(id);
+      if (id.startsWith('offline-')) {
+        const syncId = parseInt(id.replace('offline-', ''));
+        await db.syncQueue.delete(syncId);
+      } else {
+        await workDiaryApi.removeMaterial(id);
+      }
+
       setDiary(prev => prev ? {
         ...prev,
         materialUsages: prev.materialUsages.filter(m => m.id !== id)
@@ -214,8 +319,11 @@ export function WorkDiary() {
                  </thead>
                  <tbody className="divide-y">
                    {diary?.laborEntries.map(entry => (
-                     <tr key={entry.id} className="hover:bg-blue-50">
-                       <td className="px-4 py-3 font-medium">{entry.employee.name}</td>
+                     <tr key={entry.id} className={`hover:bg-blue-50 ${(entry as any)._isOffline ? 'bg-blue-50/50 italic text-secondary-500' : ''}`}>
+                       <td className="px-4 py-3 font-medium flex items-center gap-2">
+                         {entry.employee.name}
+                         {(entry as any)._isOffline && <Clock size={14} className="text-blue-500"  />}
+                       </td>
                        <td className="px-4 py-3 text-secondary-500">{entry.employee.jobTitle}</td>
                        <td className="px-4 py-3 text-right">{entry.cost.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}</td>
                        <td className="px-4 py-3 text-center">
@@ -290,8 +398,11 @@ export function WorkDiary() {
                  </thead>
                  <tbody className="divide-y">
                    {diary?.materialUsages.map(usage => (
-                     <tr key={usage.id} className="hover:bg-orange-50">
-                       <td className="px-4 py-3 font-medium">{usage.material.name}</td>
+                     <tr key={usage.id} className={`hover:bg-orange-50 ${(usage as any)._isOffline ? 'bg-orange-50/50 italic text-secondary-500' : ''}`}>
+                       <td className="px-4 py-3 font-medium flex items-center gap-2">
+                         {usage.material.name}
+                         {(usage as any)._isOffline && <Clock size={14} className="text-orange-500"  />}
+                       </td>
                        <td className="px-4 py-3 text-center">{usage.quantity} <span className="text-xs text-secondary-400">{usage.material.unit}</span></td>
                        <td className="px-4 py-3 text-right">{usage.unitPrice.toLocaleString('pt-BR')}</td>
                        <td className="px-4 py-3 text-right">{(usage.quantity * usage.unitPrice).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}</td>
