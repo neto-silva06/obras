@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { LayoutDashboard, Save } from 'lucide-react';
+import { LayoutDashboard, Save, Clock } from 'lucide-react';
 import { Button } from '../components/ui/Button.js';
 import { Input } from '../components/ui/Input.js';
 import { Card } from '../components/ui/Card.js';
@@ -53,9 +53,15 @@ export function StockMovement() {
 
     setSubmitting(true);
     try {
-      await stockApi.adjust(formData);
-      toast.success('Movimentação realizada com sucesso!');
-      navigate('/dashboard');
+      const response: any = await stockApi.adjust(formData);
+
+      if (response._isOffline) {
+        toast.success('Movimentação salva localmente. Sincronização pendente.');
+        navigate('/dashboard');
+      } else {
+        toast.success('Movimentação realizada com sucesso!');
+        navigate('/dashboard');
+      }
     } catch (error: any) {
       toast.error(error.response?.data?.message || 'Erro ao realizar movimentação');
     } finally {
@@ -68,7 +74,14 @@ export function StockMovement() {
   return (
     <div className="p-6 max-w-2xl mx-auto space-y-6">
       <div className="flex justify-between items-center">
-        <h1 className="text-2xl font-bold text-secondary-900">Movimentação de Estoque</h1>
+        <div className="flex items-center gap-3">
+          <h1 className="text-2xl font-bold text-secondary-900">Movimentação de Estoque</h1>
+          {!navigator.onLine && (
+            <span className="flex items-center gap-1 text-xs bg-orange-100 text-orange-700 px-2 py-1 rounded-full animate-pulse">
+              <Clock size={12} /> Offline
+            </span>
+          )}
+        </div>
         <Button variant="outline" onClick={() => navigate('/dashboard')} title="Voltar ao Dashboard">
           <LayoutDashboard size={20} className="mr-2" /> Dashboard
         </Button>
@@ -160,7 +173,7 @@ export function StockMovement() {
 
           <div className="flex justify-end pt-4 border-t border-secondary-100">
             <Button type="submit" isLoading={submitting} className="w-full sm:w-auto">
-              <Save size={18} className="mr-2" /> Confirmar Movimentação
+              <Save size={18} className="mr-2" /> Confirmar {navigator.onLine ? 'Movimentação' : 'Localmente'}
             </Button>
           </div>
         </form>

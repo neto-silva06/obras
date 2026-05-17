@@ -58,16 +58,26 @@ api.interceptors.response.use(
           ? JSON.parse(originalRequest.data)
           : originalRequest.data;
 
-        await db.syncQueue.add({
+        const id = await db.syncQueue.add({
           url: originalRequest.url,
           method: originalRequest.method.toUpperCase() as any,
           data: requestData,
           timestamp: Date.now(),
           status: 'pending'
         });
+
         toast.success('Você está offline. A alteração foi salva localmente e será sincronizada em breve.');
-        // Return a mock success so the UI doesn't crash
-        return Promise.resolve({ data: { message: 'Saved offline' }, status: 202 });
+
+        // Return a mock success with offline flag and id
+        return Promise.resolve({
+          data: {
+            ...requestData,
+            id: `offline-${id}`,
+            _isOffline: true,
+            _syncId: id
+          },
+          status: 202
+        });
       }
     }
 
