@@ -515,18 +515,18 @@ export function WorkDiary() {
         </Card>
       </div>
 
-      <Card className="p-6 bg-primary-900 text-white flex flex-col md:flex-row justify-between items-center gap-4">
+      <Card className="p-6 bg-secondary-50 flex flex-col md:flex-row justify-between items-center gap-4">
          <div className="flex items-center gap-4">
-            <div className="p-3 bg-white/10 rounded-full">
+            <div className="p-3 bg-secondary-200 text-secondary-700 rounded-full">
               <HardHat size={32} />
             </div>
             <div>
-              <div className="text-primary-300 text-sm uppercase tracking-wider font-bold">Custo Total do Dia</div>
-              <div className="text-3xl font-black">{(totalLabor + totalMaterials).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}</div>
+              <div className="text-secondary-900 text-sm uppercase tracking-wider font-bold">Custo Total do Dia</div>
+              <div className="text-3xl font-black text-secondary-900">{(totalLabor + totalMaterials).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}</div>
             </div>
          </div>
          <div className="text-right">
-            <div className="text-primary-300 text-xs italic">Valores calculados em tempo real com base nos registros acima.</div>
+            <div className="text-secondary-900 text-xs italic">Valores calculados em tempo real com base nos registros acima.</div>
          </div>
       </Card>
     </div>
