@@ -44,21 +44,20 @@ export function WorkDiary() {
       try {
         const data = await apiCall;
         setter(data);
+        return data;
       } catch (err) {
         console.warn('Silent fetch error (likely offline/cached):', err);
+        return null;
       }
     };
 
     try {
-      await Promise.all([
+      const [workData, employeesData, materialsData, diaryData] = await Promise.all([
         fetchSafe(workApi.getById(workId), setWork),
         fetchSafe(employeeApi.getAll(), setEmployees),
         fetchSafe(materialApi.getAll(), setMaterials),
         fetchSafe(workDiaryApi.getDiary(workId, selectedDate), setDiary)
       ]);
-      setWork(workData);
-      setEmployees(employeesData);
-      setMaterials(materialsData);
 
       // Merge with pending operations from syncQueue
       const pendingOps = await db.syncQueue
@@ -66,14 +65,15 @@ export function WorkDiary() {
         .equals('pending')
         .toArray();
 
+      if (!diaryData) return;
       const enrichedDiary = { ...diaryData };
 
       // Handle pending labor entries
-      pendingOps.forEach(op => {
+      pendingOps.forEach((op: any) => {
         if (op.url === '/api/work-diaries/labor' && op.method === 'POST') {
           if (op.data.workDiaryId === diaryData.id) {
-            const employee = employeesData.find(e => e.id === op.data.employeeId);
-            if (employee && !enrichedDiary.laborEntries.some(le => le.employeeId === employee.id)) {
+            const employee = (employeesData || []).find((e: any) => e.id === op.data.employeeId);
+            if (employee && !enrichedDiary.laborEntries.some((le: any) => le.employeeId === employee.id)) {
               enrichedDiary.laborEntries.push({
                 id: `offline-${op.id}`,
                 workDiaryId: diaryData.id,
@@ -89,7 +89,7 @@ export function WorkDiary() {
 
         if (op.url === '/api/work-diaries/material' && op.method === 'POST') {
           if (op.data.workDiaryId === diaryData.id) {
-            const material = materialsData.find(m => m.id === op.data.materialId);
+            const material = (materialsData || []).find((m: any) => m.id === op.data.materialId);
             if (material) {
               enrichedDiary.materialUsages.push({
                 id: `offline-${op.id}`,
@@ -121,7 +121,7 @@ export function WorkDiary() {
   const handleAddLabor = async () => {
     if (!diary || !selectedEmployee || !workId) return;
 
-    const employee = employees.find(e => e.id === selectedEmployee);
+    const employee = employees.find((e: any) => e.id === selectedEmployee);
     if (!employee) return;
 
     // Optimistic UI update
@@ -144,7 +144,7 @@ export function WorkDiary() {
       const response: any = await workDiaryApi.addLabor(diary.id, selectedEmployee);
 
       if (response._isOffline) {
-        const employee = employees.find(e => e.id === selectedEmployee);
+        const employee = employees.find((e: any) => e.id === selectedEmployee);
         if (employee) {
           const newEntry = {
             id: response.id,
@@ -184,7 +184,7 @@ export function WorkDiary() {
     const previousDiary = { ...diary };
     setDiary({
       ...diary,
-      laborEntries: diary.laborEntries.filter(e => e.id !== id)
+      laborEntries: diary.laborEntries.filter((e: any) => e.id !== id)
     });
 
     try {
@@ -197,7 +197,7 @@ export function WorkDiary() {
 
       setDiary(prev => prev ? {
         ...prev,
-        laborEntries: prev.laborEntries.filter(e => e.id !== id)
+        laborEntries: prev.laborEntries.filter((e: any) => e.id !== id)
       } : null);
       toast.success('Registro removido');
     } catch (error) {
@@ -212,7 +212,7 @@ export function WorkDiary() {
   const handleAddMaterial = async () => {
     if (!diary || !selectedMaterial || !workId) return;
 
-    const material = materials.find(m => m.id === selectedMaterial);
+    const material = materials.find((m: any) => m.id === selectedMaterial);
     if (!material) return;
 
     // Optimistic UI update
@@ -243,7 +243,7 @@ export function WorkDiary() {
       const response: any = await workDiaryApi.addMaterial(usageData);
 
       if (response._isOffline) {
-        const material = materials.find(m => m.id === selectedMaterial);
+        const material = materials.find((m: any) => m.id === selectedMaterial);
         if (material) {
           const newUsage = {
             id: response.id,
@@ -289,7 +289,7 @@ export function WorkDiary() {
     const previousDiary = { ...diary };
     setDiary({
       ...diary,
-      materialUsages: diary.materialUsages.filter(m => m.id !== id)
+      materialUsages: diary.materialUsages.filter((m: any) => m.id !== id)
     });
 
     try {
@@ -302,7 +302,7 @@ export function WorkDiary() {
 
       setDiary(prev => prev ? {
         ...prev,
-        materialUsages: prev.materialUsages.filter(m => m.id !== id)
+        materialUsages: prev.materialUsages.filter((m: any) => m.id !== id)
       } : null);
       toast.success('Registro removido');
     } catch (error) {
@@ -359,7 +359,7 @@ export function WorkDiary() {
         <input
           type="date"
           value={selectedDate}
-          onChange={(e) => setSelectedDate(e.target.value)}
+          onChange={(e: any) => setSelectedDate(e.target.value)}
           className="border-secondary-300 rounded-md p-2"
         />
       </Card>
@@ -379,12 +379,12 @@ export function WorkDiary() {
                 <select
                   className="flex-1 rounded-md border-secondary-300 text-sm"
                   value={selectedEmployee}
-                  onChange={(e) => setSelectedEmployee(e.target.value)}
+                  onChange={(e: any) => setSelectedEmployee(e.target.value)}
                 >
                   <option value="">Selecionar Funcionário...</option>
                   {employees
-                    .filter(emp => !diary?.laborEntries.some(le => le.employeeId === emp.id))
-                    .map(emp => (
+                    .filter((emp: any) => !diary?.laborEntries.some((le: any) => le.employeeId === emp.id))
+                    .map((emp: any) => (
                       <option key={emp.id} value={emp.id}>{emp.name} ({emp.jobTitle})</option>
                     ))
                   }
@@ -409,7 +409,7 @@ export function WorkDiary() {
                    </tr>
                  </thead>
                  <tbody className="divide-y">
-                   {diary?.laborEntries.map(entry => (
+                   {diary?.laborEntries.map((entry: any) => (
                      <tr key={entry.id} className={`hover:bg-blue-50 ${(entry as any)._isOffline ? 'bg-blue-50/50 italic text-secondary-500' : ''}`}>
                        <td className="px-4 py-3 font-medium flex items-center gap-2">
                          {entry.employee.name}
@@ -448,10 +448,10 @@ export function WorkDiary() {
                 <select
                   className="col-span-2 rounded-md border-secondary-300 text-sm"
                   value={selectedMaterial}
-                  onChange={(e) => setSelectedMaterial(e.target.value)}
+                  onChange={(e: any) => setSelectedMaterial(e.target.value)}
                 >
                   <option value="">Selecionar Material...</option>
-                  {materials.map(m => (
+                  {materials.map((m: any) => (
                     <option key={m.id} value={m.id}>{m.name} ({m.unit})</option>
                   ))}
                 </select>
@@ -459,13 +459,13 @@ export function WorkDiary() {
                   type="number"
                   placeholder="Qtd"
                   value={materialQty}
-                  onChange={(e) => setMaterialQty(parseFloat(e.target.value) || 0)}
+                  onChange={(e: any) => setMaterialQty(parseFloat(e.target.value) || 0)}
                 />
                 <Input
                   type="number"
                   placeholder="Preço Unit. R$"
                   value={materialPrice}
-                  onChange={(e) => setMaterialPrice(parseFloat(e.target.value) || 0)}
+                  onChange={(e: any) => setMaterialPrice(parseFloat(e.target.value) || 0)}
                 />
                 <Button className="col-span-2 bg-orange-600 hover:bg-orange-700" onClick={handleAddMaterial} disabled={!selectedMaterial}>
                   <Plus size={18} className="mr-1" /> Adicionar Material
@@ -488,7 +488,7 @@ export function WorkDiary() {
                    </tr>
                  </thead>
                  <tbody className="divide-y">
-                   {diary?.materialUsages.map(usage => (
+                   {diary?.materialUsages.map((usage: any) => (
                      <tr key={usage.id} className={`hover:bg-orange-50 ${(usage as any)._isOffline ? 'bg-orange-50/50 italic text-secondary-500' : ''}`}>
                        <td className="px-4 py-3 font-medium flex items-center gap-2">
                          {usage.material.name}
